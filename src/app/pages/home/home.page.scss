@@ -1,27 +1,134 @@
-#container {
+.container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
   text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  
+  ion-spinner {
+    margin-bottom: 16px;
+    --color: var(--ion-color-primary);
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
+.tema-card {
+  height: 100%;
   margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-image {
+    height: 180px;
+    overflow: hidden;
+    background: var(--ion-color-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .placeholder-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: var(--ion-color-medium);
+      opacity: 0.5;
+    }
+  }
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0;
+    }
+  }
+  
+  ion-card-content {
+    padding-top: 0;
+    
+    p {
+      margin: 0 0 12px 0;
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
 }
 
-#container a {
-  text-decoration: none;
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  
+  ion-icon {
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  h3 {
+    margin: 0 0 8px 0;
+    color: var(--ion-color-dark);
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .tema-card {
+    .card-image {
+      height: 150px;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .tema-card {
+    .card-image {
+      background: var(--ion-color-dark);
+    }
+  }
 }
