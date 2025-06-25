@@ -180,8 +180,8 @@ export class FirebaseService {
       console.log('📡 Obteniendo datos de las colecciones...');
       const [temasSnapshot, seccionesSnapshot, practicasSnapshot] = await Promise.all([
         getDocs(query(collection(this.firestore, 'Temas'), orderBy('orden'))),
-        getDocs(query(collection(this.firestore, 'secciones'), orderBy('orden'))),
-        getDocs(query(collection(this.firestore, 'Practicas'), orderBy('orden')))
+        getDocs(query(collection(this.firestore, 'secciones'))),
+        getDocs(query(collection(this.firestore, 'Practicas')))
       ]);
 
       console.log('📊 Documentos obtenidos:');
