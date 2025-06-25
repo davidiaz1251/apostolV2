@@ -1,0 +1,147 @@
+.container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+  
+  ion-icon {
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+  
+  h3 {
+    margin: 16px 0 8px 0;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+.list-item {
+  margin-bottom: 12px;
+  
+  &.completed {
+    opacity: 0.7;
+  }
+  
+  ion-card {
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    
+    ion-card-content {
+      padding: 16px;
+    }
+  }
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.item-info {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--ion-color-dark);
+    
+    &.completed-text {
+      text-decoration: line-through;
+      color: var(--ion-color-medium);
+    }
+  }
+  
+  p {
+    margin: 0 0 12px 0;
+    color: var(--ion-color-medium);
+    line-height: 1.4;
+    
+    &.completed-text {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.item-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .priority-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .date {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 32px;
+    width: 32px;
+    
+    ion-icon {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.modal-content {
+  padding: 16px;
+}
+
+.modal-actions {
+  padding: 24px 16px 16px 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .item-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .item-actions {
+    flex-direction: row;
+    align-self: flex-end;
+  }
+}
+
+/* Animaciones suaves */
+.list-item {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

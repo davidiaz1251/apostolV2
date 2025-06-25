@@ -1,0 +1,171 @@
+.container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+.profile-card {
+  margin-bottom: 16px;
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--ion-color-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ion-color-medium);
+  }
+  
+  .user-details {
+    flex: 1;
+    
+    h3 {
+      margin: 0 0 4px 0;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+    
+    p {
+      margin: 0;
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+      
+      &.bio {
+        margin-top: 8px;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.settings-card,
+.security-card,
+.help-card {
+  margin-bottom: 16px;
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ion-color-primary);
+  }
+  
+  ion-list {
+    padding: 0;
+  }
+  
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    
+    ion-icon {
+      margin-right: 16px;
+      color: var(--ion-color-medium);
+    }
+    
+    h3 {
+      margin: 0 0 4px 0;
+      font-weight: 500;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+.logout-section {
+  margin: 32px 0 16px 0;
+}
+
+.login-prompt {
+  .login-content {
+    text-align: center;
+    padding: 20px;
+    
+    ion-icon {
+      color: var(--ion-color-medium);
+      margin-bottom: 16px;
+    }
+    
+    h3 {
+      margin: 0 0 8px 0;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0 0 24px 0;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+/* Tema oscuro */
+body.dark {
+  .profile-info .avatar {
+    background: var(--ion-color-dark);
+  }
+  
+  .profile-info .user-details h3 {
+    color: var(--ion-color-light);
+  }
+  
+  ion-card-title {
+    color: var(--ion-color-primary) !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .profile-info {
+    .avatar {
+      width: 50px;
+      height: 50px;
+    }
+  }
+}
+
+/* Animaciones */
+ion-card {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estados de los toggles */
+ion-toggle {
+  --track-background-checked: var(--ion-color-primary);
+  --handle-background-checked: var(--ion-color-primary-contrast);
+}

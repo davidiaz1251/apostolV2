@@ -1,0 +1,131 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Lista de Tareas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Lista de Tareas</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="container">
+    <!-- Lista de items estilo SwiftUI -->
+    <div *ngIf="items.length === 0" class="empty-state">
+      <ion-icon name="list" size="large"></ion-icon>
+      <h3>No hay tareas</h3>
+      <p>Toca el botón + para agregar tu primera tarea</p>
+    </div>
+
+    <div *ngFor="let item of items" class="list-item" [class.completed]="item.completed">
+      <ion-card>
+        <ion-card-content>
+          <div class="item-header">
+            <div class="item-info">
+              <h3 [class.completed-text]="item.completed">{{ item.title }}</h3>
+              <p [class.completed-text]="item.completed">{{ item.description }}</p>
+              <div class="item-meta">
+                <ion-badge [color]="getPriorityColor(item.priority)" class="priority-badge">
+                  {{ getPriorityText(item.priority) }}
+                </ion-badge>
+                <span class="date">{{ item.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+            <div class="item-actions">
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                [color]="item.completed ? 'success' : 'medium'"
+                (click)="toggleComplete(item)">
+                <ion-icon name="checkmark"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" color="primary" (click)="openModal(item)">
+                <ion-icon name="pencil"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" color="danger" (click)="deleteItem(item)">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- Botón flotante para agregar -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="openModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Modal para agregar/editar -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ editingItem ? 'Editar Tarea' : 'Nueva Tarea' }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <div class="modal-content">
+        <ion-item>
+          <ion-input 
+            label="Título" 
+            labelPlacement="floating" 
+            [(ngModel)]="newItem.title" 
+            placeholder="Ingresa el título de la tarea">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-textarea 
+            label="Descripción" 
+            labelPlacement="floating" 
+            [(ngModel)]="newItem.description" 
+            placeholder="Describe la tarea"
+            rows="3">
+          </ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Prioridad</ion-label>
+          <ion-button 
+            fill="outline" 
+            size="small" 
+            [color]="newItem.priority === 'low' ? 'success' : 'medium'"
+            (click)="newItem.priority = 'low'">
+            Baja
+          </ion-button>
+          <ion-button 
+            fill="outline" 
+            size="small" 
+            [color]="newItem.priority === 'medium' ? 'warning' : 'medium'"
+            (click)="newItem.priority = 'medium'">
+            Media
+          </ion-button>
+          <ion-button 
+            fill="outline" 
+            size="small" 
+            [color]="newItem.priority === 'high' ? 'danger' : 'medium'"
+            (click)="newItem.priority = 'high'">
+            Alta
+          </ion-button>
+        </ion-item>
+
+        <div class="modal-actions">
+          <ion-button 
+            expand="block" 
+            (click)="saveItem()" 
+            [disabled]="!newItem.title.trim()">
+            {{ editingItem ? 'Actualizar' : 'Crear' }} Tarea
+          </ion-button>
+        </div>
+      </div>
+    </ion-content>
+  </ion-modal>
+</ion-content>

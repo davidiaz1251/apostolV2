@@ -1,0 +1,171 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Configuración</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Configuración</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="container">
+    <!-- Perfil del Usuario -->
+    <ion-card *ngIf="isAuthenticated" class="profile-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person"></ion-icon>
+          Perfil
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="profile-info">
+          <div class="avatar">
+            <ion-icon name="person" size="large"></ion-icon>
+          </div>
+          <div class="user-details">
+            <h3>{{ profile.displayName || 'Usuario' }}</h3>
+            <p>{{ profile.email }}</p>
+            <p class="bio" *ngIf="profile.bio">{{ profile.bio }}</p>
+          </div>
+        </div>
+        <ion-button fill="outline" (click)="updateProfile()">
+          <ion-icon name="save" slot="start"></ion-icon>
+          Editar Perfil
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Configuraciones de la App -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="settings"></ion-icon>
+          Preferencias
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="moon" slot="start"></ion-icon>
+            <ion-label>Modo Oscuro</ion-label>
+            <ion-toggle 
+              [(ngModel)]="settings.darkMode" 
+              (ionChange)="toggleDarkMode(settings.darkMode)">
+            </ion-toggle>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon name="notifications" slot="start"></ion-icon>
+            <ion-label>Notificaciones</ion-label>
+            <ion-toggle 
+              [(ngModel)]="settings.notifications" 
+              (ionChange)="saveSettings()">
+            </ion-toggle>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon name="language" slot="start"></ion-icon>
+            <ion-label>Idioma</ion-label>
+            <ion-label slot="end" color="medium">Español</ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon name="save" slot="start"></ion-icon>
+            <ion-label>Guardado Automático</ion-label>
+            <ion-toggle 
+              [(ngModel)]="settings.autoSave" 
+              (ionChange)="saveSettings()">
+            </ion-toggle>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Cuenta y Seguridad -->
+    <ion-card *ngIf="isAuthenticated" class="security-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="shield"></ion-icon>
+          Cuenta y Seguridad
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item button (click)="changePassword()">
+            <ion-icon name="mail" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Cambiar Contraseña</h3>
+              <p>Actualiza tu contraseña de acceso</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item button (click)="deleteAccount()">
+            <ion-icon name="person" slot="start" color="danger"></ion-icon>
+            <ion-label color="danger">
+              <h3>Eliminar Cuenta</h3>
+              <p>Eliminar permanentemente tu cuenta</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Soporte y Ayuda -->
+    <ion-card class="help-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="help"></ion-icon>
+          Soporte
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item button (click)="openHelp()">
+            <ion-icon name="help" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Centro de Ayuda</h3>
+              <p>Preguntas frecuentes y soporte</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item button (click)="openPrivacyPolicy()">
+            <ion-icon name="shield" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Política de Privacidad</h3>
+              <p>Información sobre tus datos</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Cerrar Sesión -->
+    <div class="logout-section" *ngIf="isAuthenticated">
+      <ion-button 
+        expand="block" 
+        color="danger" 
+        fill="outline" 
+        (click)="logout()">
+        <ion-icon name="log-out" slot="start"></ion-icon>
+        Cerrar Sesión
+      </ion-button>
+    </div>
+
+    <!-- Login prompt si no está autenticado -->
+    <ion-card *ngIf="!isAuthenticated" class="login-prompt">
+      <ion-card-content>
+        <div class="login-content">
+          <ion-icon name="person" size="large"></ion-icon>
+          <h3>Inicia Sesión</h3>
+          <p>Accede a tu cuenta para personalizar tu experiencia</p>
+          <ion-button routerLink="/home" expand="block">
+            Ir a Inicio
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
