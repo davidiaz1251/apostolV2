@@ -17,37 +17,75 @@
     <!-- Estado de carga -->
     <div *ngIf="isLoading" class="loading-state">
       <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando temas...</p>
+      <p>Cargando contenido...</p>
     </div>
 
-    <!-- Lista de temas -->
-    <div *ngIf="!isLoading && temas.length > 0">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let tema of temas">
-            <ion-card button (click)="onTemaClick(tema)" class="tema-card">
-              <div class="card-image">
-                <img *ngIf="tema.img" [src]="tema.img" [alt]="tema.titulo" />
-                <div *ngIf="!tema.img" class="placeholder-image">
-                  <ion-icon name="book" size="large"></ion-icon>
-                </div>
+    <!-- Secciones con temas -->
+    <div *ngIf="!isLoading && getSecciones().length > 0" class="sections-container">
+      <div *ngFor="let seccionNombre of getSecciones()" class="section-group">
+        
+        <!-- Header de la sección -->
+        <div class="section-header">
+          <div class="section-title-container">
+            <h2 class="section-title">{{ seccionNombre }}</h2>
+            <ion-chip class="section-count" color="primary" outline="true">
+              <ion-label>{{ temasAgrupados[seccionNombre].length }}</ion-label>
+            </ion-chip>
+          </div>
+          <p *ngIf="getSeccionInfo(seccionNombre)?.titulo" class="section-subtitle">
+            {{ getSeccionInfo(seccionNombre)?.titulo }}
+          </p>
+        </div>
+
+        <!-- Grid de temas -->
+        <div class="temas-grid">
+          <div 
+            *ngFor="let tema of temasAgrupados[seccionNombre]; let i = index" 
+            class="tema-card-modern"
+            (click)="onTemaClick(tema)"
+          >
+            <!-- Imagen del tema -->
+            <div class="tema-image-container">
+              <img 
+                *ngIf="tema.img" 
+                [src]="tema.img" 
+                [alt]="tema.titulo"
+                class="tema-image"
+              />
+              <div *ngIf="!tema.img" class="tema-placeholder">
+                <ion-icon name="image" size="large"></ion-icon>
               </div>
-              <ion-card-header>
-                <ion-card-title>{{ tema.titulo }}</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <p *ngIf="tema.intro">{{ tema.intro }}</p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+              
+              <!-- Overlay con número de orden -->
+              <div class="tema-order-badge">
+                {{ tema.orden }}
+              </div>
+              
+              <!-- Indicador de video si existe -->
+              <div *ngIf="tema.video" class="video-indicator">
+                <ion-icon name="play" size="small"></ion-icon>
+              </div>
+            </div>
+
+            <!-- Contenido del tema -->
+            <div class="tema-content">
+              <h3 class="tema-title">{{ tema.titulo }}</h3>
+              <p *ngIf="tema.intro" class="tema-intro">{{ tema.intro }}</p>
+              
+              <!-- Acción -->
+              <div class="tema-action">
+                <ion-icon name="chevron-forward" size="small"></ion-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Estado vacío -->
-    <div *ngIf="!isLoading && temas.length === 0" class="empty-state">
+    <div *ngIf="!isLoading && getSecciones().length === 0" class="empty-state">
       <ion-icon name="book" size="large" color="medium"></ion-icon>
-      <h3>No hay temas disponibles</h3>
+      <h3>No hay contenido disponible</h3>
       <p>Los temas se cargarán automáticamente</p>
     </div>
   </div>

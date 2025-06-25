@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol, IonChip, IonLabel } from '@ionic/angular/standalone';
 import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule } from '@angular/common';
-import { Tema } from '../../interfaces/tema.interface';
+import { Tema, Seccion } from '../../interfaces/tema.interface';
 import { addIcons } from 'ionicons';
-import { book } from 'ionicons/icons';
+import { book, chevronForward, play, image } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
@@ -12,40 +12,66 @@ import { book } from 'ionicons/icons';
   styleUrls: ['home.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, 
-    IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol, CommonModule
+    IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol, IonChip, IonLabel, CommonModule
   ],
 })
 export class HomePage implements OnInit {
   private firebaseService = inject(FirebaseService);
   
   temas: Tema[] = [];
+  secciones: Seccion[] = [];
+  temasAgrupados: { [seccion: string]: Tema[] } = {};
   isLoading = true;
 
   constructor() {
-    addIcons({ book });
+    addIcons({ book, chevronForward, play, image });
   }
 
   ngOnInit() {
-    this.loadTemas();
+    this.loadData();
   }
 
-  private async loadTemas() {
-    // Cargar temas (el servicio maneja offline/online automáticamente)
-    this.firebaseService.temas$.subscribe(temas => {
-      console.log('📋 Todos los temas recibidos:', temas.length);
-      if (temas.length > 0) {
-        console.log('📋 Primer tema:', {
-          id: temas[0].id,
-          titulo: temas[0].titulo,
-          img: temas[0].img,
-          intro: temas[0].intro
-        });
-      }
-      
-      this.temas = temas;
-      this.isLoading = false;
-      console.log('Temas mostrados en UI:', this.temas.length);
+  private async loadData() {
+    // Cargar secciones y temas
+    this.firebaseService.secciones$.subscribe(secciones => {
+      this.secciones = secciones;
+      console.log('📂 Secciones cargadas:', this.secciones.length);
+      this.agruparTemas();
     });
+
+    this.firebaseService.temas$.subscribe(temas => {
+      this.temas = temas;
+      console.log('📋 Temas cargados:', this.temas.length);
+      this.agruparTemas();
+      this.isLoading = false;
+    });
+  }
+
+  private agruparTemas() {
+    if (this.temas.length === 0 || this.secciones.length === 0) return;
+
+    this.temasAgrupados = {};
+    
+    // Agrupar temas por sección
+    this.secciones.forEach(seccion => {
+      const temasDeSeccion = this.temas
+        .filter(tema => tema.seccion === seccion.nombre)
+        .sort((a, b) => a.orden - b.orden); // Ordenar por orden
+      
+      if (temasDeSeccion.length > 0) {
+        this.temasAgrupados[seccion.nombre] = temasDeSeccion;
+      }
+    });
+
+    console.log('📊 Temas agrupados:', this.temasAgrupados);
+  }
+
+  getSecciones(): string[] {
+    return Object.keys(this.temasAgrupados);
+  }
+
+  getSeccionInfo(seccionNombre: string): Seccion | null {
+    return this.secciones.find(s => s.nombre === seccionNombre) || null;
   }
 
   onTemaClick(tema: Tema) {
