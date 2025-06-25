@@ -1,38 +1,32 @@
 export interface Tema {
   id: string;
-  titulo: string;
-  descripcion: string;
-  imagen?: string;
-  imagenLocal?: string;
+  img: string;
+  intro: string;
   seccion: string;
+  texto: string;
+  titulo: string;
+  video: string;
   orden: number;
-  activo: boolean;
-  fechaCreacion: Date;
-  fechaModificacion?: Date;
+  // Campos adicionales para offline
+  imagenLocal?: string;
 }
 
 export interface Seccion {
   id: string;
   nombre: string;
-  descripcion: string;
-  imagen?: string;
+  titulo: string;
+  // Campos adicionales para offline
   imagenLocal?: string;
-  orden: number;
-  activo: boolean;
-  fechaCreacion: Date;
-  fechaModificacion?: Date;
 }
 
 export interface Practica {
   id: string;
-  titulo: string;
-  descripcion: string;
-  contenido: string;
+  pregunta: string;
+  respuesta: string;
+  a: string;
+  b: string;
+  c: string;
   tema: string;
-  orden: number;
-  activo: boolean;
-  fechaCreacion: Date;
-  fechaModificacion?: Date;
 }
 
 export interface SyncStatus {

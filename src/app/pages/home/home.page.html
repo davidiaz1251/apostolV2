@@ -27,8 +27,8 @@
           <ion-col size="12" size-md="6" size-lg="4" *ngFor="let tema of temas">
             <ion-card button (click)="onTemaClick(tema)" class="tema-card">
               <div class="card-image">
-                <img *ngIf="tema.imagen" [src]="tema.imagen" [alt]="tema.titulo" />
-                <div *ngIf="!tema.imagen" class="placeholder-image">
+                <img *ngIf="tema.img" [src]="tema.img" [alt]="tema.titulo" />
+                <div *ngIf="!tema.img" class="placeholder-image">
                   <ion-icon name="book" size="large"></ion-icon>
                 </div>
               </div>
@@ -36,7 +36,7 @@
                 <ion-card-title>{{ tema.titulo }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                <p *ngIf="tema.descripcion">{{ tema.descripcion }}</p>
+                <p *ngIf="tema.intro">{{ tema.intro }}</p>
               </ion-card-content>
             </ion-card>
           </ion-col>

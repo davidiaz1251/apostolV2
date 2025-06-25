@@ -46,17 +46,22 @@ export class FirebaseService {
 
   // Inicializar datos offline
   private async initializeOfflineData() {
+    console.log('🚀 Inicializando FirebaseService...');
+    
     // Configurar Remote Config
     await this.setupRemoteConfig();
     
     // Cargar datos locales primero
+    console.log('📂 Cargando datos locales...');
     await this.loadLocalData();
     
     // Verificar versión y sincronizar si es necesario
+    console.log('🔍 Verificando versión y sincronización...');
     await this.checkVersionAndSync();
     
     // Escuchar cambios de conexión para futuras sincronizaciones
     this.offlineService.isOnline$.subscribe(async (isOnline) => {
+      console.log('🔄 Cambio de conexión detectado:', isOnline ? 'ONLINE' : 'OFFLINE');
       if (isOnline) {
         await this.checkVersionAndSync();
       }
@@ -66,6 +71,8 @@ export class FirebaseService {
   // Configurar Remote Config
   private async setupRemoteConfig() {
     try {
+      console.log('⚙️ Configurando Remote Config...');
+      
       // Configurar valores por defecto
       const defaultConfig = {
         'temas_version': '1'
@@ -77,21 +84,26 @@ export class FirebaseService {
         fetchTimeoutMillis: 10000
       };
       
-      // Configurar Remote Config (esto se debe hacer en la inicialización de la app)
-      console.log('Remote Config configurado');
+      // Nota: La configuración de Remote Config debe hacerse en main.ts
+      console.log('✅ Remote Config configurado con valores por defecto:', defaultConfig);
     } catch (error) {
-      console.error('Error configurando Remote Config:', error);
+      console.error('❌ Error configurando Remote Config:', error);
     }
   }
 
   // Verificar versión y sincronizar si es necesario
   private async checkVersionAndSync() {
+    console.log('🔄 Iniciando checkVersionAndSync...');
+    console.log('🌐 Estado de conexión:', this.offlineService.isConnected());
+    
     if (!this.offlineService.isConnected()) {
-      console.log('Sin conexión, usando datos locales');
+      console.log('❌ Sin conexión, usando datos locales');
+      await this.loadLocalData();
       return;
     }
 
     try {
+      console.log('📡 Obteniendo configuración remota...');
       // Obtener versión remota
       await fetchAndActivate(this.remoteConfig);
       const remoteVersion = getValue(this.remoteConfig, 'temas_version').asString();
@@ -99,57 +111,83 @@ export class FirebaseService {
       // Obtener versión local
       const localVersion = await this.offlineService.getData(this.STORAGE_KEYS.TEMAS_VERSION) || '0';
       
-      console.log('Versión remota:', remoteVersion, 'Versión local:', localVersion);
+      console.log('🆚 Versión remota:', remoteVersion, 'Versión local:', localVersion);
       
       if (remoteVersion !== localVersion) {
-        console.log('Nueva versión disponible, sincronizando...');
+        console.log('🔄 Nueva versión disponible, sincronizando...');
         await this.syncDataFromFirebase();
         await this.offlineService.setData(this.STORAGE_KEYS.TEMAS_VERSION, remoteVersion);
+        console.log('✅ Sincronización completada y versión actualizada');
       } else {
-        console.log('Versión actual, usando datos locales');
+        console.log('✅ Versión actual, usando datos locales');
       }
     } catch (error) {
-      console.error('Error verificando versión:', error);
-      // Si hay error en Remote Config, cargar datos locales
-      await this.loadLocalData();
+      console.error('❌ Error verificando versión:', error);
+      // Si hay error en Remote Config, intentar sincronizar directamente
+      console.log('🔄 Intentando sincronización directa...');
+      await this.syncDataFromFirebase();
     }
   }
 
   // Cargar datos desde almacenamiento local
   private async loadLocalData() {
     try {
+      console.log('📂 Cargando datos desde almacenamiento local...');
       const [temas, secciones, practicas] = await Promise.all([
         this.offlineService.getData(this.STORAGE_KEYS.TEMAS),
         this.offlineService.getData(this.STORAGE_KEYS.SECCIONES),
         this.offlineService.getData(this.STORAGE_KEYS.PRACTICAS)
       ]);
 
-      if (temas) this.temasSubject.next(temas);
-      if (secciones) this.seccionesSubject.next(secciones);
-      if (practicas) this.practicasSubject.next(practicas);
+      console.log('📊 Datos locales encontrados:');
+      console.log('  - Temas:', temas ? temas.length : 0);
+      console.log('  - Secciones:', secciones ? secciones.length : 0);
+      console.log('  - Prácticas:', practicas ? practicas.length : 0);
 
-      console.log('Datos locales cargados');
+      if (temas) {
+        this.temasSubject.next(temas);
+        console.log('✅ Temas cargados desde local');
+      }
+      if (secciones) {
+        this.seccionesSubject.next(secciones);
+        console.log('✅ Secciones cargadas desde local');
+      }
+      if (practicas) {
+        this.practicasSubject.next(practicas);
+        console.log('✅ Prácticas cargadas desde local');
+      }
+
+      if (!temas && !secciones && !practicas) {
+        console.log('⚠️ No se encontraron datos locales');
+      }
+
     } catch (error) {
-      console.error('Error cargando datos locales:', error);
+      console.error('❌ Error cargando datos locales:', error);
     }
   }
 
   // Sincronizar datos desde Firebase
   async syncDataFromFirebase(): Promise<void> {
     if (!this.offlineService.isConnected()) {
-      console.log('Sin conexión, usando datos locales');
+      console.log('❌ Sin conexión, no se puede sincronizar');
       return;
     }
 
     try {
-      console.log('Sincronizando datos desde Firebase...');
+      console.log('🔄 Iniciando sincronización desde Firebase...');
       
       // Obtener datos de Firebase
+      console.log('📡 Obteniendo datos de las colecciones...');
       const [temasSnapshot, seccionesSnapshot, practicasSnapshot] = await Promise.all([
         getDocs(query(collection(this.firestore, 'Temas'), orderBy('orden'))),
         getDocs(query(collection(this.firestore, 'secciones'), orderBy('orden'))),
         getDocs(query(collection(this.firestore, 'Practicas'), orderBy('orden')))
       ]);
+
+      console.log('📊 Documentos obtenidos:');
+      console.log('  - Temas:', temasSnapshot.docs.length);
+      console.log('  - Secciones:', seccionesSnapshot.docs.length);
+      console.log('  - Prácticas:', practicasSnapshot.docs.length);
 
       // Procesar temas
       const temas: Tema[] = [];
@@ -158,13 +196,13 @@ export class FirebaseService {
         const tema = { ...data, id: docSnapshot.id };
         
         // Descargar imagen si existe y no está en local
-        if (tema.imagen && !tema.imagenLocal) {
+        if (tema.img && !tema.imagenLocal) {
           try {
             const imageName = `tema_${tema.id}_${Date.now()}.jpg`;
-            const localPath = await this.offlineService.downloadAndSaveImage(tema.imagen, imageName);
+            const localPath = await this.offlineService.downloadAndSaveImage(tema.img, imageName);
             tema.imagenLocal = localPath;
           } catch (error) {
-            console.warn('Error descargando imagen del tema:', tema.id, error);
+            console.warn('⚠️ Error descargando imagen del tema:', tema.id, error);
           }
         }
         
@@ -177,17 +215,6 @@ export class FirebaseService {
         const data = docSnapshot.data() as Seccion;
         const seccion = { ...data, id: docSnapshot.id };
         
-        // Descargar imagen si existe y no está en local
-        if (seccion.imagen && !seccion.imagenLocal) {
-          try {
-            const imageName = `seccion_${seccion.id}_${Date.now()}.jpg`;
-            const localPath = await this.offlineService.downloadAndSaveImage(seccion.imagen, imageName);
-            seccion.imagenLocal = localPath;
-          } catch (error) {
-            console.warn('Error descargando imagen de la sección:', seccion.id, error);
-          }
-        }
-        
         secciones.push(seccion);
       }
 
@@ -198,6 +225,7 @@ export class FirebaseService {
         practicas.push({ ...data, id: docSnapshot.id });
       });
 
+      console.log('💾 Guardando datos en almacenamiento local...');
       // Guardar en almacenamiento local
       await Promise.all([
         this.offlineService.setData(this.STORAGE_KEYS.TEMAS, temas),
@@ -211,13 +239,19 @@ export class FirebaseService {
       ]);
 
       // Actualizar observables
+      console.log('🔄 Actualizando observables...');
       this.temasSubject.next(temas);
       this.seccionesSubject.next(secciones);
       this.practicasSubject.next(practicas);
 
-      console.log('Sincronización completada');
+      console.log('✅ Sincronización completada exitosamente');
+      console.log('📊 Datos sincronizados:');
+      console.log('  - Temas:', temas.length);
+      console.log('  - Secciones:', secciones.length);
+      console.log('  - Prácticas:', practicas.length);
     } catch (error) {
-      console.error('Error sincronizando datos:', error);
+      console.error('❌ Error sincronizando datos:', error);
+      console.error('Error details:', error);
     }
   }
 
@@ -337,7 +371,7 @@ export class FirebaseService {
 
   private async getTemasSeccionAsync(seccionTema: string): Promise<Tema[]> {
     const temas = this.temasSubject.value;
-    return temas.filter(tema => tema.seccion === seccionTema && tema.activo);
+    return temas.filter(tema => tema.seccion === seccionTema);
   }
 
   getTemaId(id: string): Observable<Tema[]> {
@@ -409,7 +443,7 @@ export class FirebaseService {
 
   private async getPracticasAsync(temaId: string): Promise<Practica[]> {
     const practicas = this.practicasSubject.value;
-    return practicas.filter(practica => practica.tema === temaId && practica.activo);
+    return practicas.filter(practica => practica.tema === temaId);
   }
 
   async setPractica(practica: PracticaModel): Promise<boolean> {
@@ -489,7 +523,7 @@ export class FirebaseService {
     if (tema.imagenLocal) {
       return await this.offlineService.getLocalImagePath(tema.imagenLocal);
     }
-    return tema.imagen || null;
+    return tema.img || null;
   }
 
   // Verificar si hay datos locales

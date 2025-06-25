@@ -32,9 +32,19 @@ export class HomePage implements OnInit {
   private async loadTemas() {
     // Cargar temas (el servicio maneja offline/online automáticamente)
     this.firebaseService.temas$.subscribe(temas => {
-      this.temas = temas.filter(tema => tema.activo);
+      console.log('📋 Todos los temas recibidos:', temas.length);
+      if (temas.length > 0) {
+        console.log('📋 Primer tema:', {
+          id: temas[0].id,
+          titulo: temas[0].titulo,
+          img: temas[0].img,
+          intro: temas[0].intro
+        });
+      }
+      
+      this.temas = temas;
       this.isLoading = false;
-      console.log('Temas cargados:', this.temas.length);
+      console.log('Temas mostrados en UI:', this.temas.length);
     });
   }
 
