@@ -5,6 +5,23 @@
   padding-bottom: 80px;
 }
 
+// Theme selector styles
+.theme-selector {
+  ion-select {
+    max-width: none;
+    --placeholder-color: var(--ion-color-medium);
+    --color: var(--ion-color-dark);
+    
+    &::part(text) {
+      font-weight: 500;
+    }
+  }
+  
+  ion-icon {
+    transition: all 0.3s ease;
+  }
+}
+
 .profile-card {
   margin-bottom: 16px;
   

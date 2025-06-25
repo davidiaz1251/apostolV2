@@ -48,13 +48,20 @@
       </ion-card-header>
       <ion-card-content>
         <ion-list>
-          <ion-item>
-            <ion-icon name="moon" slot="start"></ion-icon>
-            <ion-label>Modo Oscuro</ion-label>
-            <ion-toggle 
-              [(ngModel)]="settings.darkMode" 
-              (ionChange)="toggleDarkMode(settings.darkMode)">
-            </ion-toggle>
+          <ion-item class="theme-selector">
+            <ion-icon [name]="getCurrentThemeIcon()" slot="start"></ion-icon>
+            <ion-label>Tema</ion-label>
+            <ion-select 
+              [(ngModel)]="settings.theme" 
+              (ionChange)="onThemeChange($event.detail.value)"
+              interface="popover"
+              placeholder="Seleccionar tema">
+              <ion-select-option 
+                *ngFor="let option of themeOptions" 
+                [value]="option.value">
+                {{ option.label }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
 
           <ion-item>

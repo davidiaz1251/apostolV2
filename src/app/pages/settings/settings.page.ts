@@ -1,10 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton, IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonAlert } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton, IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonAlert, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { person, notifications, shield, moon, language, help, logOut, save, mail } from 'ionicons/icons';
+import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail } from 'ionicons/icons';
 import { FirebaseService } from '../../services/firebase.service';
+import { ThemeService, ThemeMode } from '../../services/theme.service';
 import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
@@ -13,12 +14,13 @@ import { AlertController, ToastController } from '@ionic/angular';
   styleUrls: ['./settings.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton,
-    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonAlert,
+    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonAlert, IonSelect, IonSelectOption,
     CommonModule, FormsModule
   ],
 })
 export class SettingsPage implements OnInit {
   private firebaseService = inject(FirebaseService);
+  private themeService = inject(ThemeService);
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
   
@@ -27,11 +29,18 @@ export class SettingsPage implements OnInit {
   
   // Configuraciones de la app
   settings = {
-    darkMode: false,
+    theme: 'system' as ThemeMode,
     notifications: true,
     language: 'es',
     autoSave: true
   };
+  
+  // Opciones de tema disponibles
+  themeOptions = [
+    { value: 'system', label: 'Sistema', icon: 'phone' },
+    { value: 'light', label: 'Claro', icon: 'sunny' },
+    { value: 'dark', label: 'Oscuro', icon: 'moon' }
+  ];
   
   // Datos del perfil
   profile = {
@@ -41,12 +50,14 @@ export class SettingsPage implements OnInit {
   };
 
   constructor() {
-    addIcons({ person, notifications, shield, moon, language, help, logOut, save, mail });
+    addIcons({ person, notifications, shield, moon, sunny, language, help, logOut, save, mail });
   }
 
   ngOnInit() {
     this.loadUserData();
     this.loadSettings();
+    // Inicializar el listener para cambios del sistema
+    this.themeService.initSystemThemeListener();
   }
 
   loadUserData() {
@@ -64,11 +75,17 @@ export class SettingsPage implements OnInit {
     // Cargar configuraciones del localStorage
     const savedSettings = localStorage.getItem('appSettings');
     if (savedSettings) {
-      this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
+      const parsed = JSON.parse(savedSettings);
+      this.settings = { 
+        ...this.settings, 
+        ...parsed,
+        // Migrar darkMode legacy a theme
+        theme: parsed.theme || (parsed.darkMode ? 'dark' : 'system')
+      };
     }
     
-    // Aplicar tema oscuro si está activado
-    this.applyDarkMode(this.settings.darkMode);
+    // Establecer el tema usando el servicio
+    this.themeService.setTheme(this.settings.theme);
   }
 
   saveSettings() {
@@ -76,24 +93,44 @@ export class SettingsPage implements OnInit {
     this.showToast('Configuración guardada');
   }
 
-  applyDarkMode(enabled: boolean) {
-    // Aplicar la clase dark al documento
-    if (enabled) {
-      document.documentElement.classList.add('ion-palette-dark');
-      document.body.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('ion-palette-dark');
-      document.body.classList.remove('dark');
-    }
-  }
-
-  toggleDarkMode(enabled: boolean) {
-    this.settings.darkMode = enabled;
-    this.applyDarkMode(enabled);
+  onThemeChange(newTheme: ThemeMode) {
+    this.settings.theme = newTheme;
+    this.themeService.setTheme(newTheme);
     this.saveSettings();
     
-    const message = enabled ? 'Modo oscuro activado' : 'Modo claro activado';
+    let message = '';
+    switch (newTheme) {
+      case 'system':
+        const systemPref = this.themeService.getSystemPreference();
+        message = `Tema del sistema activado (${systemPref === 'dark' ? 'oscuro' : 'claro'})`;
+        break;
+      case 'light':
+        message = 'Tema claro activado';
+        break;
+      case 'dark':
+        message = 'Tema oscuro activado';
+        break;
+    }
     this.showToast(message);
+  }
+
+  getCurrentThemeLabel(): string {
+    const currentTheme = this.settings.theme;
+    const option = this.themeOptions.find(opt => opt.value === currentTheme);
+    return option?.label || 'Sistema';
+  }
+
+  getCurrentThemeIcon(): string {
+    const currentTheme = this.settings.theme;
+    
+    if (currentTheme === 'system') {
+      // Mostrar el icono basado en lo que realmente se está mostrando
+      const effective = this.themeService.getEffectiveTheme();
+      return effective === 'dark' ? 'moon' : 'sunny';
+    }
+    
+    const option = this.themeOptions.find(opt => opt.value === currentTheme);
+    return option?.icon || 'moon';
   }
 
   async updateProfile() {
