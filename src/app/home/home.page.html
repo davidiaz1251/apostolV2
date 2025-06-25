@@ -1,0 +1,88 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Apostol V2 - Firebase Test
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Firebase Test</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" style="padding: 20px;">
+    <h2>Estado de autenticación: {{ isAuthenticated ? 'Conectado' : 'Desconectado' }}</h2>
+    
+    <!-- Sección de Autenticación -->
+    <div *ngIf="!isAuthenticated" style="margin: 20px 0;">
+      <h3>Prueba de Autenticación</h3>
+      <ion-list>
+        <ion-item>
+          <ion-input 
+            label="Email" 
+            labelPlacement="floating" 
+            type="email" 
+            [(ngModel)]="email" 
+            placeholder="usuario@ejemplo.com">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input 
+            label="Contraseña" 
+            labelPlacement="floating" 
+            type="password" 
+            [(ngModel)]="password" 
+            placeholder="••••••••">
+          </ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" (click)="testAuth()" [disabled]="!email || !password">
+        Registrar Usuario
+      </ion-button>
+    </div>
+
+    <div *ngIf="isAuthenticated" style="margin: 20px 0;">
+      <ion-button expand="block" color="danger" (click)="logout()">
+        Cerrar Sesión
+      </ion-button>
+    </div>
+
+    <!-- Sección de Firestore -->
+    <div style="margin: 20px 0;">
+      <h3>Prueba de Firestore</h3>
+      <ion-list>
+        <ion-item>
+          <ion-input 
+            label="Mensaje de prueba" 
+            labelPlacement="floating" 
+            [(ngModel)]="testData" 
+            placeholder="Escribe algo para probar Firestore">
+          </ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" (click)="testFirestore()" [disabled]="!testData.trim()">
+        Añadir a Firestore
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="loadDocuments()">
+        Cargar Documentos
+      </ion-button>
+    </div>
+
+    <!-- Lista de documentos -->
+    <div *ngIf="documents.length > 0" style="margin: 20px 0;">
+      <h3>Documentos en Firestore:</h3>
+      <ion-list>
+        <ion-item *ngFor="let doc of documents">
+          <div>
+            <p><strong>ID:</strong> {{ doc.id }}</p>
+            <p><strong>Mensaje:</strong> {{ doc.message }}</p>
+            <p><strong>Fecha:</strong> {{ doc.timestamp?.toDate() | date:'short' }}</p>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>
