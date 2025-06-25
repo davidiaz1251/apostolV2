@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { person, notifications, shield, moon, language, help, logOut, save, mail } from 'ionicons/icons';
-import { FirebaseService } from '../services/firebase.service';
-import { AlertController } from '@ionic/angular';
+import { FirebaseService } from '../../services/firebase.service';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-settings',
@@ -20,6 +20,7 @@ import { AlertController } from '@ionic/angular';
 export class SettingsPage implements OnInit {
   private firebaseService = inject(FirebaseService);
   private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   
   user: any = null;
   isAuthenticated = false;
@@ -67,7 +68,7 @@ export class SettingsPage implements OnInit {
     }
     
     // Aplicar tema oscuro si está activado
-    this.toggleDarkMode(this.settings.darkMode, false);
+    this.applyDarkMode(this.settings.darkMode);
   }
 
   saveSettings() {
@@ -75,12 +76,24 @@ export class SettingsPage implements OnInit {
     this.showToast('Configuración guardada');
   }
 
-  toggleDarkMode(enabled: boolean, save = true) {
-    this.settings.darkMode = enabled;
-    document.body.classList.toggle('dark', enabled);
-    if (save) {
-      this.saveSettings();
+  applyDarkMode(enabled: boolean) {
+    // Aplicar la clase dark al documento
+    if (enabled) {
+      document.documentElement.classList.add('ion-palette-dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('ion-palette-dark');
+      document.body.classList.remove('dark');
     }
+  }
+
+  toggleDarkMode(enabled: boolean) {
+    this.settings.darkMode = enabled;
+    this.applyDarkMode(enabled);
+    this.saveSettings();
+    
+    const message = enabled ? 'Modo oscuro activado' : 'Modo claro activado';
+    this.showToast(message);
   }
 
   async updateProfile() {
@@ -185,8 +198,19 @@ export class SettingsPage implements OnInit {
   }
 
   async showToast(message: string) {
-    // Implementar toast notification
-    console.log(message);
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+    await toast.present();
   }
 
   openHelp() {

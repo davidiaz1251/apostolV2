@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { add, checkmark, ellipsisVertical, pencil, trash } from 'ionicons/icons';
-import { FirebaseService } from '../services/firebase.service';
+import { FirebaseService } from '../../services/firebase.service';
 
 interface ListItem {
   id?: string;

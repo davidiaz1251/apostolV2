@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonItem, IonInput, IonList } from '@ionic/angular/standalone';
-import { FirebaseService } from '../services/firebase.service';
+import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
