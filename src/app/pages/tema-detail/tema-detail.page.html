@@ -86,9 +86,12 @@
       
       <div class="videos-container">
         <div *ngFor="let video of videos; let i = index" class="video-card">
-          <div class="video-header">
-            <h3>{{ expandedVideos[i] ? 'Video Explicativo' : 'Ver Video Explicativo' }}</h3>
-            <ion-button fill="clear" size="small" (click)="toggleVideoExpand(i)">
+          <div class="video-header" (click)="toggleVideoExpand(i)">
+            <h3>
+              <ion-icon name="play-circle" color="primary"></ion-icon>
+              {{ expandedVideos[i] ? 'Video Explicativo' : 'Ver Video Explicativo' }}
+            </h3>
+            <ion-button fill="clear" size="small">
               <ion-icon [name]="expandedVideos[i] ? 'chevron-up' : 'chevron-down'"></ion-icon>
             </ion-button>
           </div>
