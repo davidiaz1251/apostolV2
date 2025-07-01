@@ -1,0 +1,154 @@
+<ion-header [translucent]="true" class="detail-header">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ tema?.titulo }}</ion-title>
+    
+    <!-- Botón de acciones en el header -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="toggleFavorite()">
+        <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'" color="light"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="shareContent()">
+        <ion-icon name="share-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="detail-content">
+  <!-- Hero section con imagen -->
+  <div class="hero-section" *ngIf="tema">
+    <div class="hero-background">
+      <img 
+        *ngIf="tema.img" 
+        [src]="tema.img" 
+        [alt]="tema.titulo"
+        class="hero-image"
+      />
+      <div *ngIf="!tema.img" class="hero-placeholder">
+        <ion-icon name="document-text" size="large"></ion-icon>
+      </div>
+    </div>
+    
+    <!-- Gradiente overlay -->
+    <div class="hero-overlay"></div>
+    
+    <!-- Contenido del hero -->
+    <div class="hero-content">
+      <div class="tema-badge">
+        Tema {{ tema.orden }}
+      </div>
+      <h1 class="hero-title">{{ tema.titulo }}</h1>
+      <p *ngIf="tema.intro" class="hero-intro">{{ tema.intro }}</p>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando contenido...</p>
+  </div>
+
+  <!-- Content section -->
+  <div *ngIf="!isLoading && tema" class="content-wrapper">
+    
+    <!-- Texto principal del tema -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ion-icon name="document-text" color="primary"></ion-icon>
+          Contenido
+        </h2>
+      </div>
+      
+      <div class="content-card">
+        <div 
+          [innerHTML]="tema.texto | styleDocumento" 
+          class="wysiwyg-content"
+          #textContent>
+        </div>
+      </div>
+    </div>
+
+    <!-- Videos explicativos -->
+    <div *ngIf="videos && videos.length > 0" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ion-icon name="play-circle" color="primary"></ion-icon>
+          Explicación en Video
+        </h2>
+        <ion-chip color="primary" outline="true">
+          <ion-label>{{ videos.length }} video{{ videos.length > 1 ? 's' : '' }}</ion-label>
+        </ion-chip>
+      </div>
+      
+      <div class="videos-container">
+        <div *ngFor="let video of videos; let i = index" class="video-card">
+          <div class="video-header">
+            <h3>Video {{ i + 1 }}</h3>
+            <ion-button fill="clear" size="small" (click)="toggleVideoExpand(i)">
+              <ion-icon [name]="expandedVideos[i] ? 'chevron-up' : 'chevron-down'"></ion-icon>
+            </ion-button>
+          </div>
+          
+          <div class="video-wrapper" [class.expanded]="expandedVideos[i]">
+            <iframe 
+              [src]="video | video" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación entre temas -->
+    <div class="navigation-section">
+      <ion-button 
+        *ngIf="previousTema" 
+        fill="outline" 
+        expand="block" 
+        (click)="navigateToTema(previousTema)"
+        class="nav-button">
+        <ion-icon name="chevron-back" slot="start"></ion-icon>
+        Anterior: {{ previousTema.titulo }}
+      </ion-button>
+      
+      <ion-button 
+        *ngIf="nextTema" 
+        fill="solid" 
+        expand="block" 
+        (click)="navigateToTema(nextTema)"
+        class="nav-button next-button">
+        Siguiente: {{ nextTema.titulo }}
+        <ion-icon name="chevron-forward" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Botón flotante para volver arriba -->
+    <ion-fab 
+      vertical="bottom" 
+      horizontal="end" 
+      slot="fixed"
+      *ngIf="showScrollToTop">
+      <ion-fab-button size="small" (click)="scrollToTop()">
+        <ion-icon name="chevron-up"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!isLoading && !tema" class="error-state">
+    <ion-icon name="alert-circle" color="danger" size="large"></ion-icon>
+    <h3>Tema no encontrado</h3>
+    <p>No se pudo cargar el contenido del tema seleccionado.</p>
+    <ion-button fill="outline" routerLink="/home">
+      <ion-icon name="home" slot="start"></ion-icon>
+      Volver al inicio
+    </ion-button>
+  </div>
+</ion-content>

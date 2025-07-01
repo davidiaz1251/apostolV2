@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonChip, IonLabel } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule } from '@angular/common';
 import { Tema, Seccion } from '../../interfaces/tema.interface';
@@ -18,6 +19,7 @@ import { register } from 'swiper/element/bundle';
 })
 export class HomePage implements OnInit {
   private firebaseService = inject(FirebaseService);
+  private router = inject(Router);
   
   temas: Tema[] = [];
   secciones: Seccion[] = [];
@@ -78,6 +80,6 @@ export class HomePage implements OnInit {
 
   onTemaClick(tema: Tema) {
     console.log('Tema seleccionado:', tema.titulo);
-    // TODO: Navegar a la página de detalle del tema
+    this.router.navigate(['/tema', tema.id]);
   }
 }

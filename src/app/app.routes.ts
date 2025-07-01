@@ -24,4 +24,8 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'tema/:id',
+    loadComponent: () => import('./pages/tema-detail/tema-detail.page').then((m) => m.TemaDetailPage),
+  },
 ];

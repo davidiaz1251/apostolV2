@@ -1,0 +1,237 @@
+// Header
+.detail-header ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+.detail-content {
+  --background: var(--ion-color-light, #f8f9fa);
+}
+
+// Hero Section
+.hero-section {
+  position: relative;
+  height: 300px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  ion-icon {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 4rem;
+  }
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  padding: 24px;
+  color: white;
+  width: 100%;
+}
+
+.tema-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-intro {
+  font-size: 1rem;
+  line-height: 1.4;
+  opacity: 0.9;
+  margin: 0;
+}
+
+// Content
+.content-wrapper {
+  padding: 0 0 100px 0;
+}
+
+.content-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 16px 20px;
+  margin-top: 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ion-color-dark);
+}
+
+.content-card {
+  margin: 0 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.wysiwyg-content {
+  padding: 24px;
+  line-height: 1.7;
+  color: var(--ion-color-dark);
+  
+  h1, h2, h3, h4 {
+    color: var(--ion-color-primary);
+    margin: 24px 0 16px 0;
+    font-weight: 600;
+    &:first-child { margin-top: 0; }
+  }
+  
+  p {
+    margin: 16px 0;
+    text-align: justify;
+    &:first-child { margin-top: 0; }
+    &:last-child { margin-bottom: 0; }
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 16px 0;
+  }
+  
+  strong, b {
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+}
+
+// Videos
+.videos-container {
+  padding: 0 20px;
+}
+
+.video-card {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.video-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--ion-color-light);
+  
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.video-wrapper {
+  height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &.expanded {
+    height: auto;
+    padding-bottom: 56.25%;
+    position: relative;
+  }
+  
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+}
+
+// Navigation
+.navigation-section {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-button {
+  --border-radius: 12px;
+  height: 48px;
+}
+
+// States
+.loading-container, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+// Responsive
+@media (min-width: 768px) {
+  .hero-section { height: 400px; }
+  .hero-title { font-size: 2.2rem; }
+  .content-wrapper { max-width: 800px; margin: 0 auto; }
+  .navigation-section { 
+    flex-direction: row; 
+    .nav-button { flex: 0 0 48%; }
+  }
+}
