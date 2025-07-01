@@ -73,10 +73,6 @@
 .temas-swiper-container {
   margin: 0 -16px; // Compensar el padding del container para que los slides lleguen a los bordes
   
-  .temas-swiper {
-    padding-bottom: 40px; // Espacio para la paginación
-  }
-  
   .tema-slide {
     height: auto;
     padding: 0 4px; // Un poco de padding para evitar que las cards se peguen en breakpoints
@@ -91,19 +87,6 @@
     .tema-slide {
       padding: 0 2px; // Menos padding en móvil
     }
-  }
-}
-
-// Estilos personalizados para Swiper
-swiper-container {
-  --swiper-pagination-color: var(--ion-color-primary);
-  --swiper-pagination-bullet-inactive-color: var(--ion-color-medium);
-  --swiper-pagination-bullet-inactive-opacity: 0.3;
-  --swiper-pagination-bullet-size: 8px;
-  --swiper-pagination-bullet-horizontal-gap: 4px;
-  
-  &::part(pagination) {
-    bottom: 10px;
   }
 }
 
@@ -320,10 +303,5 @@ body.dark {
       background: rgba(0, 0, 0, 0.8);
       color: var(--ion-color-primary-tint);
     }
-  }
-  
-  // Swiper en modo oscuro
-  swiper-container {
-    --swiper-pagination-bullet-inactive-color: var(--ion-color-step-400);
   }
 }
