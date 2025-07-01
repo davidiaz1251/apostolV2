@@ -90,10 +90,14 @@
 // Content
 .content-wrapper {
   padding: 0 0 100px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .content-section {
   margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
 }
 
 .section-header {
@@ -165,6 +169,10 @@
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .video-header {
@@ -182,14 +190,20 @@
 }
 
 .video-wrapper {
-  height: 0;
   overflow: hidden;
   transition: all 0.3s ease;
+  background: #000;
+  border-radius: 8px;
+  
+  &:not(.expanded) {
+    height: 0;
+    padding-bottom: 0;
+  }
   
   &.expanded {
-    height: auto;
-    padding-bottom: 56.25%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
     position: relative;
+    height: 0;
   }
   
   iframe {
@@ -199,6 +213,7 @@
     width: 100%;
     height: 100%;
     border: none;
+    border-radius: 8px;
   }
 }
 

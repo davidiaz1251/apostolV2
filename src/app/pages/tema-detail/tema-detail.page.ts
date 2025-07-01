@@ -97,14 +97,16 @@ export class TemaDetailPage implements OnInit, OnDestroy {
       return;
     }
 
-    // Procesar videos - pueden ser URLs separadas por comas o una sola URL
-    this.videos = this.tema.video
-      .split(',')
-      .map(url => url.trim())
-      .filter(url => url.length > 0);
-
-    // Inicializar estado expandido de videos (todos colapsados inicialmente)
-    this.expandedVideos = new Array(this.videos.length).fill(false);
+    // El video es un ID de YouTube, no una lista separada por comas
+    const videoId = this.tema.video.trim();
+    if (videoId.length > 0) {
+      this.videos = [videoId];
+      // Inicializar estado expandido de videos (todos colapsados inicialmente)
+      this.expandedVideos = [false];
+    } else {
+      this.videos = [];
+      this.expandedVideos = [];
+    }
   }
 
   private setupNavigation() {

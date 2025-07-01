@@ -87,7 +87,7 @@
       <div class="videos-container">
         <div *ngFor="let video of videos; let i = index" class="video-card">
           <div class="video-header">
-            <h3>Video {{ i + 1 }}</h3>
+            <h3>{{ expandedVideos[i] ? 'Video Explicativo' : 'Ver Video Explicativo' }}</h3>
             <ion-button fill="clear" size="small" (click)="toggleVideoExpand(i)">
               <ion-icon [name]="expandedVideos[i] ? 'chevron-up' : 'chevron-down'"></ion-icon>
             </ion-button>
@@ -95,6 +95,7 @@
           
           <div class="video-wrapper" [class.expanded]="expandedVideos[i]">
             <iframe 
+              *ngIf="expandedVideos[i]"
               [src]="video | video" 
               frameborder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
