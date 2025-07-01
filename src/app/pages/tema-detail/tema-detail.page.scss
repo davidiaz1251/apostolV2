@@ -27,6 +27,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  
+  @media (min-width: 1200px) {
+    object-position: center top;
+  }
 }
 
 .hero-placeholder {
@@ -163,6 +168,33 @@
   strong, b {
     font-weight: 600;
     color: var(--ion-color-primary);
+  }
+  
+  // Mejoras para pantallas grandes
+  @media (min-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.7rem; }
+    h3 { font-size: 1.4rem; }
+    h4 { font-size: 1.2rem; }
+    
+    p {
+      max-width: none;
+      columns: auto;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.3rem; }
+    
+    // Para textos muy largos, dividir en columnas
+    &.long-content {
+      column-count: 2;
+      column-gap: 40px;
+      column-rule: 1px solid var(--ion-color-step-200);
+    }
   }
 }
 
@@ -304,9 +336,100 @@
 @media (min-width: 768px) {
   .hero-section { height: 400px; }
   .hero-title { font-size: 2.2rem; }
-  .content-wrapper { max-width: 800px; margin: 0 auto; }
+  
+  .content-wrapper { 
+    max-width: 1000px; 
+    margin: 0 auto; 
+  }
+  
+  .content-card {
+    margin: 0 40px;
+  }
+  
+  .videos-container {
+    padding: 0 40px;
+  }
+  
+  .section-header {
+    padding: 0 40px 16px 40px;
+  }
+  
   .navigation-section { 
-    flex-direction: row; 
+    flex-direction: row;
+    padding: 24px 40px;
     .nav-button { flex: 0 0 48%; }
+  }
+}
+
+@media (min-width: 1200px) {
+  .content-wrapper { 
+    max-width: 1200px; 
+  }
+  
+  .content-card {
+    margin: 0 60px;
+  }
+  
+  .videos-container {
+    padding: 0 60px;
+  }
+  
+  .section-header {
+    padding: 0 60px 16px 60px;
+  }
+  
+  .navigation-section {
+    padding: 24px 60px;
+  }
+  
+  .wysiwyg-content {
+    padding: 32px 40px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+}
+
+@media (min-width: 1400px) {
+  .hero-section { 
+    height: 500px; 
+  }
+  
+  .hero-content {
+    padding: 40px 60px;
+  }
+  
+  .hero-title { 
+    font-size: 2.8rem; 
+  }
+  
+  .hero-intro {
+    font-size: 1.2rem;
+    max-width: 70%;
+  }
+  
+  .content-wrapper { 
+    max-width: 1400px; 
+  }
+  
+  .content-card {
+    margin: 0 80px;
+  }
+  
+  .videos-container {
+    padding: 0 80px;
+  }
+  
+  .section-header {
+    padding: 0 80px 20px 80px;
+  }
+  
+  .navigation-section {
+    padding: 32px 80px;
+  }
+  
+  .wysiwyg-content {
+    padding: 40px 60px;
+    font-size: 1.2rem;
+    line-height: 1.9;
   }
 }
