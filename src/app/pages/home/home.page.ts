@@ -1,18 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol, IonChip, IonLabel } from '@ionic/angular/standalone';
+import { Component, OnInit, inject, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonChip, IonLabel } from '@ionic/angular/standalone';
 import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule } from '@angular/common';
 import { Tema, Seccion } from '../../interfaces/tema.interface';
 import { addIcons } from 'ionicons';
 import { book, chevronForward, play, image } from 'ionicons/icons';
+import { register } from 'swiper/element/bundle';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, 
-    IonCardContent, IonIcon, IonSpinner, IonGrid, IonRow, IonCol, IonChip, IonLabel, CommonModule
+    IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonChip, IonLabel, CommonModule
   ],
 })
 export class HomePage implements OnInit {
@@ -25,6 +26,7 @@ export class HomePage implements OnInit {
 
   constructor() {
     addIcons({ book, chevronForward, play, image });
+    register();
   }
 
   ngOnInit() {

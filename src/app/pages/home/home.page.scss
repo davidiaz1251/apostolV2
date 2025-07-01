@@ -70,14 +70,40 @@
   }
 }
 
-.temas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+.temas-swiper-container {
+  margin: 0 -16px; // Compensar el padding del container para que los slides lleguen a los bordes
   
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .temas-swiper {
+    padding-bottom: 40px; // Espacio para la paginación
+  }
+  
+  .tema-slide {
+    height: auto;
+    padding: 0 4px; // Un poco de padding para evitar que las cards se peguen en breakpoints
+  }
+}
+
+// Ajustes específicos para móvil
+@media (max-width: 767px) {
+  .temas-swiper-container {
+    margin: 0 -8px; // Menos margen negativo en móvil
+    
+    .tema-slide {
+      padding: 0 2px; // Menos padding en móvil
+    }
+  }
+}
+
+// Estilos personalizados para Swiper
+swiper-container {
+  --swiper-pagination-color: var(--ion-color-primary);
+  --swiper-pagination-bullet-inactive-color: var(--ion-color-medium);
+  --swiper-pagination-bullet-inactive-opacity: 0.3;
+  --swiper-pagination-bullet-size: 8px;
+  --swiper-pagination-bullet-horizontal-gap: 4px;
+  
+  &::part(pagination) {
+    bottom: 10px;
   }
 }
 
@@ -89,6 +115,9 @@
   cursor: pointer;
   position: relative;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  height: 100%; // Asegurar que todas las cards tengan la misma altura en el swiper
+  display: flex;
+  flex-direction: column;
   
   &:hover {
     transform: translateY(-4px);
@@ -126,20 +155,6 @@
     height: 100%;
     color: white;
     opacity: 0.7;
-  }
-  
-  // Alternativa con aspect ratio más flexible
-  &.flexible-aspect {
-    height: auto;
-    min-height: 160px;
-    max-height: 200px;
-    
-    .tema-image {
-      height: auto;
-      max-height: 200px;
-      width: 100%;
-      object-fit: contain;
-    }
   }
   
   // Overlay sutil para mejor legibilidad de badges
@@ -199,6 +214,9 @@
 .tema-content {
   padding: 20px;
   position: relative;
+  flex: 1; // Permitir que el contenido se expanda para igualar alturas
+  display: flex;
+  flex-direction: column;
   
   .tema-title {
     font-size: 1.1rem;
@@ -223,6 +241,7 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex: 1; // Permitir que la intro se expanda
   }
   
   .tema-action {
@@ -301,5 +320,10 @@ body.dark {
       background: rgba(0, 0, 0, 0.8);
       color: var(--ion-color-primary-tint);
     }
+  }
+  
+  // Swiper en modo oscuro
+  swiper-container {
+    --swiper-pagination-bullet-inactive-color: var(--ion-color-step-400);
   }
 }

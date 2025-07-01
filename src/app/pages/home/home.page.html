@@ -37,47 +37,75 @@
           </p>
         </div>
 
-        <!-- Grid de temas -->
-        <div class="temas-grid">
-          <div 
-            *ngFor="let tema of temasAgrupados[seccionNombre]; let i = index" 
-            class="tema-card-modern"
-            (click)="onTemaClick(tema)"
+        <!-- Swiper de temas -->
+        <div class="temas-swiper-container">
+          <swiper-container
+            slides-per-view="1.1"
+            space-between="12"
+            pagination="true"
+            pagination-clickable="true"
+            centered-slides="false"
+            breakpoints='{
+              "480": {
+                "slidesPerView": 1.3,
+                "spaceBetween": 16
+              },
+              "768": {
+                "slidesPerView": 2.2,
+                "spaceBetween": 20
+              },
+              "1024": {
+                "slidesPerView": 3,
+                "spaceBetween": 24
+              },
+              "1200": {
+                "slidesPerView": 3.5,
+                "spaceBetween": 28
+              }
+            }'
+            class="temas-swiper"
           >
-            <!-- Imagen del tema -->
-            <div class="tema-image-container">
-              <img 
-                *ngIf="tema.img" 
-                [src]="tema.img" 
-                [alt]="tema.titulo"
-                class="tema-image"
-              />
-              <div *ngIf="!tema.img" class="tema-placeholder">
-                <ion-icon name="image" size="large"></ion-icon>
-              </div>
-              
-              <!-- Overlay con número de orden -->
-              <div class="tema-order-badge">
-                {{ tema.orden }}
-              </div>
-              
-              <!-- Indicador de video si existe -->
-              <div *ngIf="tema.video" class="video-indicator">
-                <ion-icon name="play" size="small"></ion-icon>
-              </div>
-            </div>
+            <swiper-slide
+              *ngFor="let tema of temasAgrupados[seccionNombre]; let i = index"
+              class="tema-slide"
+            >
+              <div class="tema-card-modern" (click)="onTemaClick(tema)">
+                <!-- Imagen del tema -->
+                <div class="tema-image-container">
+                  <img 
+                    *ngIf="tema.img" 
+                    [src]="tema.img" 
+                    [alt]="tema.titulo"
+                    class="tema-image"
+                  />
+                  <div *ngIf="!tema.img" class="tema-placeholder">
+                    <ion-icon name="image" size="large"></ion-icon>
+                  </div>
+                  
+                  <!-- Overlay con número de orden -->
+                  <div class="tema-order-badge">
+                    {{ tema.orden }}
+                  </div>
+                  
+                  <!-- Indicador de video si existe -->
+                  <div *ngIf="tema.video" class="video-indicator">
+                    <ion-icon name="play" size="small"></ion-icon>
+                  </div>
+                </div>
 
-            <!-- Contenido del tema -->
-            <div class="tema-content">
-              <h3 class="tema-title">{{ tema.titulo }}</h3>
-              <p *ngIf="tema.intro" class="tema-intro">{{ tema.intro }}</p>
-              
-              <!-- Acción -->
-              <div class="tema-action">
-                <ion-icon name="chevron-forward" size="small"></ion-icon>
+                <!-- Contenido del tema -->
+                <div class="tema-content">
+                  <h3 class="tema-title">{{ tema.titulo }}</h3>
+                  <p *ngIf="tema.intro" class="tema-intro">{{ tema.intro }}</p>
+                  
+                  <!-- Acción -->
+                  <div class="tema-action">
+                    <ion-icon name="chevron-forward" size="small"></ion-icon>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </swiper-slide>
+          </swiper-container>
         </div>
       </div>
     </div>

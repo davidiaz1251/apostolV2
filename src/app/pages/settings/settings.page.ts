@@ -14,7 +14,7 @@ import { AlertController, ToastController } from '@ionic/angular';
   styleUrls: ['./settings.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton,
-    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonAlert, IonSelect, IonSelectOption,
+    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInput, IonSelect, IonSelectOption,
     CommonModule, FormsModule
   ],
 })

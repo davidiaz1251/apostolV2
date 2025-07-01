@@ -21,8 +21,7 @@ interface ListItem {
   styleUrls: ['./list.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton,
-    IonFab, IonFabButton, IonModal, IonInput, IonTextarea, IonButtons, IonCard, IonCardHeader,
-    IonCardTitle, IonCardContent, IonBadge, CommonModule, FormsModule
+    IonFab, IonFabButton, IonModal, IonInput, IonTextarea, IonButtons, IonCard, IonCardContent, IonBadge, CommonModule, FormsModule
   ],
 })
 export class ListPage implements OnInit {
