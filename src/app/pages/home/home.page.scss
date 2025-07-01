@@ -88,6 +88,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   
   &:hover {
     transform: translateY(-4px);
@@ -101,14 +102,19 @@
 
 .tema-image-container {
   position: relative;
-  height: 160px;
+  height: 200px; 
   overflow: hidden;
   background: linear-gradient(135deg, var(--ion-color-primary-tint), var(--ion-color-secondary-tint));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px 12px 0 0;
   
   .tema-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; // Mostrar la imagen completa sin cortar
+    object-position: center;
     transition: transform 0.3s ease;
   }
   
@@ -120,6 +126,39 @@
     height: 100%;
     color: white;
     opacity: 0.7;
+  }
+  
+  // Alternativa con aspect ratio más flexible
+  &.flexible-aspect {
+    height: auto;
+    min-height: 160px;
+    max-height: 200px;
+    
+    .tema-image {
+      height: auto;
+      max-height: 200px;
+      width: 100%;
+      object-fit: contain;
+    }
+  }
+  
+  // Overlay sutil para mejor legibilidad de badges
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      180deg, 
+      rgba(0,0,0,0.1) 0%, 
+      transparent 30%, 
+      transparent 70%, 
+      rgba(0,0,0,0.05) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
   }
   
   .tema-order-badge {
@@ -137,6 +176,7 @@
     font-size: 0.8rem;
     font-weight: 600;
     backdrop-filter: blur(8px);
+    z-index: 2;
   }
   
   .video-indicator {
@@ -152,6 +192,7 @@
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(8px);
+    z-index: 2;
   }
 }
 
@@ -167,6 +208,7 @@
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -178,6 +220,7 @@
     margin: 0 0 16px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -197,7 +240,7 @@
 }
 
 .tema-card-modern:hover .tema-image {
-  transform: scale(1.05);
+  transform: scale(1.02); // Reducir escala para un efecto más sutil
 }
 
 .empty-state {
@@ -229,9 +272,14 @@
 }
 
 // Dark mode support
-@media (prefers-color-scheme: dark) {
+body.dark {
   .tema-card-modern {
     background: var(--ion-color-step-50);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    
+    &:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
   }
   
   .section-title {
@@ -244,5 +292,14 @@
   
   .empty-state h3 {
     color: var(--ion-text-color);
+  }
+  
+  .tema-image-container {
+    background: linear-gradient(135deg, var(--ion-color-primary-shade), var(--ion-color-secondary-shade));
+    
+    .video-indicator {
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--ion-color-primary-tint);
+    }
   }
 }
