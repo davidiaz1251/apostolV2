@@ -1,14 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
+    <ion-buttons slot="end">
       <ion-button (click)="goBack()" color="primary">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>{{ tema?.titulo || 'Prueba' }}</ion-title>
-    <ion-badge slot="end" color="primary" *ngIf="preguntas.length > 0">
-      {{ getProgressText() }}
-    </ion-badge>
   </ion-toolbar>
 </ion-header>
 
@@ -97,7 +94,8 @@
       <div class="question-card">
         <div class="question-header">
           <div class="question-number">
-            Pregunta {{ currentIndex + 1 }}
+            <span>Pregunta {{ currentIndex + 1 }}</span>
+            <span class="progress-text">{{ getProgressText() }}</span>
           </div>
           <div class="progress-bar">
             <div 

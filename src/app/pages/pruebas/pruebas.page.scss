@@ -150,6 +150,17 @@
         font-weight: 500;
         opacity: 0.9;
         margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .progress-text {
+          font-size: 12px;
+          opacity: 0.8;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 4px 8px;
+          border-radius: 12px;
+        }
       }
 
       .progress-bar {

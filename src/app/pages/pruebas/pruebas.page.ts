@@ -11,7 +11,6 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonBadge,
   IonList,
   IonItem,
   IonLabel,
@@ -38,7 +37,7 @@ import { Tema, Practica } from '../../interfaces/tema.interface';
   standalone: true,
   imports: [
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon,
-    IonBadge, IonList, IonItem, IonLabel, IonRadioGroup, IonRadio,
+    IonList, IonItem, IonLabel, IonRadioGroup, IonRadio,
     IonSpinner, IonImg, CommonModule, FormsModule
   ]
 })
