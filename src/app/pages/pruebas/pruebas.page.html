@@ -1,9 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="end">
-      <ion-button (click)="goBack()" color="primary">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/practices"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ tema?.titulo || 'Prueba' }}</ion-title>
   </ion-toolbar>

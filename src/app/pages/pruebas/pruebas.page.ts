@@ -9,6 +9,7 @@ import {
   IonTitle, 
   IonToolbar,
   IonButtons,
+  IonBackButton,
   IonButton,
   IonIcon,
   IonList,
@@ -36,7 +37,7 @@ import { Tema, Practica } from '../../interfaces/tema.interface';
   styleUrls: ['./pruebas.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon,
+    IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonButton, IonIcon,
     IonList, IonItem, IonLabel, IonRadioGroup, IonRadio,
     IonSpinner, IonImg, CommonModule, FormsModule
   ]

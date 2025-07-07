@@ -18,6 +18,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/settings/settings.page').then((m) => m.SettingsPage),
       },
       {
+        path: 'practices',
+        loadComponent: () => import('./pages/practices/practices.page').then( m => m.PracticesPage)
+      },
+      {
+        path: 'pruebas/:id',
+        loadComponent: () => import('./pages/pruebas/pruebas.page').then( m => m.PruebasPage)
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full',
@@ -27,13 +35,5 @@ export const routes: Routes = [
   {
     path: 'tema/:id',
     loadComponent: () => import('./pages/tema-detail/tema-detail.page').then((m) => m.TemaDetailPage),
-  },
-  {
-    path: 'practices',
-    loadComponent: () => import('./pages/practices/practices.page').then( m => m.PracticesPage)
-  },
-  {
-    path: 'pruebas/:id',
-    loadComponent: () => import('./pages/pruebas/pruebas.page').then( m => m.PruebasPage)
   },
 ];
