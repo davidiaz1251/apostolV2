@@ -41,7 +41,7 @@ export class ListPage implements OnInit {
     switch(section) {
       case 'practices':
         // Navegar a la sección de prácticas
-        console.log('Navegando a Prácticas');
+        this.router.navigate(['/practices']);
         break;
       case 'curiosities':
         // Navegar a la sección de datos curiosos

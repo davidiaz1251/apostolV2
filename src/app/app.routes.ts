@@ -28,4 +28,12 @@ export const routes: Routes = [
     path: 'tema/:id',
     loadComponent: () => import('./pages/tema-detail/tema-detail.page').then((m) => m.TemaDetailPage),
   },
+  {
+    path: 'practices',
+    loadComponent: () => import('./pages/practices/practices.page').then( m => m.PracticesPage)
+  },
+  {
+    path: 'pruebas',
+    loadComponent: () => import('./pages/pruebas/pruebas.page').then( m => m.PruebasPage)
+  },
 ];

@@ -1,0 +1,153 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" color="primary">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ tema?.titulo || 'Prueba' }}</ion-title>
+    <ion-badge slot="end" color="primary" *ngIf="preguntas.length > 0">
+      {{ getProgressText() }}
+    </ion-badge>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-container">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando preguntas...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <ion-icon name="close-circle-outline" color="danger" size="large"></ion-icon>
+      <h3>Error al cargar</h3>
+      <p>{{ error }}</p>
+      <ion-button fill="outline" (click)="retry()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading && !error && preguntas.length === 0" class="empty-container">
+      <ion-img src="./assets/sin-resultados.gif" alt="Sin resultados"></ion-img>
+      <h3>No hay pruebas disponibles</h3>
+      <p>Este tema aún no tiene preguntas configuradas</p>
+      <ion-button fill="outline" (click)="goBack()">
+        Volver a prácticas
+      </ion-button>
+    </div>
+
+    <!-- Final results -->
+    <div *ngIf="showFinalResults" class="results-container">
+      <div class="results-card">
+        <div class="results-header">
+          <ion-icon 
+            [name]="getScorePercentage() >= 70 ? 'checkmark-circle-outline' : 'close-circle-outline'"
+            [color]="getScorePercentage() >= 70 ? 'success' : 'danger'"
+            size="large">
+          </ion-icon>
+          <h2>Resultados Finales</h2>
+        </div>
+        
+        <div class="results-stats">
+          <div class="stat-item">
+            <span class="stat-label">Respuestas correctas</span>
+            <span class="stat-value correct">{{ correctAnswers }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Respuestas incorrectas</span>
+            <span class="stat-value incorrect">{{ totalAnswers - correctAnswers }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Puntuación</span>
+            <span class="stat-value score">{{ getScorePercentage() }}%</span>
+          </div>
+        </div>
+
+        <div class="results-message">
+          <p *ngIf="getScorePercentage() >= 90" class="excellent">
+            ¡Excelente! Has dominado este tema.
+          </p>
+          <p *ngIf="getScorePercentage() >= 70 && getScorePercentage() < 90" class="good">
+            ¡Buen trabajo! Tienes un buen dominio del tema.
+          </p>
+          <p *ngIf="getScorePercentage() < 70" class="needs-improvement">
+            Sigue practicando para mejorar tu comprensión.
+          </p>
+        </div>
+
+        <div class="results-actions">
+          <ion-button expand="block" fill="outline" (click)="restartQuiz()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Intentar de nuevo
+          </ion-button>
+          <ion-button expand="block" (click)="goBack()">
+            Volver a prácticas
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz content -->
+    <div *ngIf="!isLoading && !error && preguntas.length > 0 && !showFinalResults" class="quiz-container">
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-number">
+            Pregunta {{ currentIndex + 1 }}
+          </div>
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width.%]="((currentIndex + 1) / preguntas.length) * 100">
+            </div>
+          </div>
+        </div>
+
+        <div class="question-content">
+          <h3 class="question-text">{{ getCurrentQuestion()?.pregunta }}</h3>
+
+          <ion-list class="answers-list">
+            <ion-radio-group [(ngModel)]="selectedAnswer" [disabled]="isAnswered">
+              <ion-item class="answer-item" [class.disabled]="isAnswered">
+                <ion-label>A: {{ getCurrentQuestion()?.a }}</ion-label>
+                <ion-radio value="A"></ion-radio>
+              </ion-item>
+              <ion-item class="answer-item" [class.disabled]="isAnswered">
+                <ion-label>B: {{ getCurrentQuestion()?.b }}</ion-label>
+                <ion-radio value="B"></ion-radio>
+              </ion-item>
+              <ion-item class="answer-item" [class.disabled]="isAnswered">
+                <ion-label>C: {{ getCurrentQuestion()?.c }}</ion-label>
+                <ion-radio value="C"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+
+          <!-- Result message -->
+          <div *ngIf="showResult" class="result-message" [class]="resultColor">
+            <ion-icon 
+              [name]="isCorrect ? 'checkmark-circle-outline' : 'close-circle-outline'"
+              [color]="resultColor">
+            </ion-icon>
+            <p>{{ resultMessage }}</p>
+          </div>
+
+          <!-- Action button -->
+          <div class="action-button">
+            <ion-button 
+              expand="block" 
+              [color]="isAnswered ? (isCorrect ? 'success' : 'danger') : 'primary'"
+              [disabled]="!selectedAnswer && !isAnswered"
+              (click)="isAnswered ? nextQuestion() : checkAnswer()">
+              {{ isAnswered ? buttonText : 'Comprobar' }}
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,83 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Prácticas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Prácticas</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="content-container">
+    <!-- Header section -->
+    <div class="header-section">
+      <h2>Ejercita tu conocimiento</h2>
+      <p>Practica con cuestionarios organizados por temas</p>
+      <ion-chip *ngIf="!isLoading" color="primary" outline="true">
+        <ion-icon name="book-outline"></ion-icon>
+        <ion-label>{{ getTotalTemas() }} temas disponibles</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando prácticas...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <ion-icon name="alert-circle-outline" color="danger" size="large"></ion-icon>
+      <h3>Error al cargar</h3>
+      <p>{{ error }}</p>
+      <ion-button fill="outline" (click)="loadData()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && !error" class="sections-container">
+      <div *ngFor="let seccion of secciones" class="section-group">
+        <!-- Section header -->
+        <div class="section-header">
+          <h3>{{ seccion.nombre }}</h3>
+          <ion-chip color="medium" outline="true">
+            <ion-label>{{ getSeccionTemas(seccion.nombre).length }} temas</ion-label>
+          </ion-chip>
+        </div>
+
+        <!-- Temas list -->
+        <ion-list class="temas-list">
+          <ion-item 
+            *ngFor="let tema of getSeccionTemas(seccion.nombre)" 
+            button 
+            (click)="openPractice(tema)"
+            class="tema-item">
+            <ion-icon name="play-circle-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h4>{{ tema.titulo }}</h4>
+              <p *ngIf="tema.intro">{{ tema.intro }}</p>
+            </ion-label>
+            <ion-chip slot="end" color="primary" outline="true">
+              <ion-label>{{ tema.orden }}</ion-label>
+            </ion-chip>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading && !error && secciones.length === 0" class="empty-container">
+      <ion-icon name="library-outline" size="large" color="medium"></ion-icon>
+      <h3>No hay prácticas disponibles</h3>
+      <p>Aún no se han cargado prácticas en la base de datos</p>
+    </div>
+  </div>
+</ion-content>
