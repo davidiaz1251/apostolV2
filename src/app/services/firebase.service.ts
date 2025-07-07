@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Firestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { RemoteConfig, getRemoteConfig, fetchAndActivate, getValue } from '@angular/fire/remote-config';
@@ -268,6 +268,18 @@ export class FirebaseService {
   async register(email: string, password: string) {
     try {
       const result = await createUserWithEmailAndPassword(this.auth, email, password);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async loginWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      const result = await signInWithPopup(this.auth, provider);
       return result;
     } catch (error) {
       throw error;

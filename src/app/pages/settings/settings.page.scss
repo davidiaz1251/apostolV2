@@ -209,3 +209,113 @@ ion-toggle {
   --track-background-checked: var(--ion-color-primary);
   --handle-background-checked: var(--ion-color-primary-contrast);
 }
+
+/* ===== ESTILOS DE LOGIN ===== */
+
+.login-content {
+  text-align: center;
+  padding: 20px;
+  
+  ion-icon {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0 0 24px 0;
+    color: var(--ion-color-medium);
+  }
+  
+  form {
+    margin-bottom: 20px;
+    
+    ion-item {
+      margin-bottom: 12px;
+      --border-radius: 8px;
+      --background: var(--ion-color-light);
+      
+      ion-input {
+        --padding-start: 16px;
+        --padding-end: 16px;
+      }
+    }
+  }
+  
+  .login-button {
+    margin: 16px 0;
+    --border-radius: 8px;
+    height: 48px;
+    font-weight: 600;
+  }
+  
+  .divider {
+    position: relative;
+    margin: 24px 0;
+    text-align: center;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--ion-color-medium);
+      opacity: 0.3;
+    }
+    
+    span {
+      background: var(--ion-background-color);
+      padding: 0 16px;
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  .google-button {
+    --border-radius: 8px;
+    height: 48px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    
+    ion-icon {
+      color: #4285f4;
+      margin-bottom: 0;
+      margin-right: 8px;
+    }
+  }
+  
+  .register-section {
+    margin-top: 20px;
+    
+    p {
+      margin: 0 0 8px 0;
+      font-size: 0.9rem;
+    }
+    
+    ion-button {
+      --color: var(--ion-color-primary);
+      font-weight: 600;
+    }
+  }
+}
+
+/* Tema oscuro para login */
+body.dark {
+  .login-content {
+    form ion-item {
+      --background: var(--ion-color-step-50);
+    }
+    
+    .divider span {
+      background: var(--ion-background-color);
+    }
+  }
+}

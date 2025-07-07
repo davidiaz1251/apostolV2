@@ -72,21 +72,6 @@
               (ionChange)="saveSettings()">
             </ion-toggle>
           </ion-item>
-
-          <ion-item>
-            <ion-icon name="language" slot="start"></ion-icon>
-            <ion-label>Idioma</ion-label>
-            <ion-label slot="end" color="medium">Español</ion-label>
-          </ion-item>
-
-          <ion-item>
-            <ion-icon name="save" slot="start"></ion-icon>
-            <ion-label>Guardado Automático</ion-label>
-            <ion-toggle 
-              [(ngModel)]="settings.autoSave" 
-              (ionChange)="saveSettings()">
-            </ion-toggle>
-          </ion-item>
         </ion-list>
       </ion-card-content>
     </ion-card>
@@ -168,9 +153,67 @@
           <ion-icon name="person" size="large"></ion-icon>
           <h3>Inicia Sesión</h3>
           <p>Accede a tu cuenta para personalizar tu experiencia</p>
-          <ion-button routerLink="/home" expand="block">
-            Ir a Inicio
+          
+          <!-- Formulario de login -->
+          <form #loginForm="ngForm" (ngSubmit)="loginWithEmail()">
+            <ion-item>
+              <ion-input 
+                [(ngModel)]="loginData.email" 
+                name="email"
+                type="email" 
+                placeholder="Correo electrónico"
+                required
+                email>
+              </ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-input 
+                [(ngModel)]="loginData.password" 
+                name="password"
+                type="password" 
+                placeholder="Contraseña"
+                required>
+              </ion-input>
+            </ion-item>
+            
+            <ion-button 
+              type="submit" 
+              expand="block" 
+              [disabled]="!loginForm.valid || isLoading"
+              class="login-button">
+              <ion-icon name="log-in" slot="start"></ion-icon>
+              {{ isLoading ? 'Iniciando...' : 'Iniciar Sesión' }}
+            </ion-button>
+          </form>
+          
+          <!-- Divisor -->
+          <div class="divider">
+            <span>O</span>
+          </div>
+          
+          <!-- Botón de Google -->
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            color="primary"
+            (click)="loginWithGoogle()"
+            [disabled]="isLoading"
+            class="google-button">
+            <ion-icon name="logo-google" slot="start"></ion-icon>
+            Continuar con Google
           </ion-button>
+          
+          <!-- Registro -->
+          <div class="register-section">
+            <p>¿No tienes cuenta?</p>
+            <ion-button 
+              fill="clear" 
+              (click)="showRegisterForm()"
+              [disabled]="isLoading">
+              Crear cuenta
+            </ion-button>
+          </div>
         </div>
       </ion-card-content>
     </ion-card>

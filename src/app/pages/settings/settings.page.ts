@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton, IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton, IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonInput } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail } from 'ionicons/icons';
+import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle } from 'ionicons/icons';
 import { FirebaseService } from '../../services/firebase.service';
 import { ThemeService, ThemeMode } from '../../services/theme.service';
 import { AlertController, ToastController } from '@ionic/angular';
@@ -15,7 +15,7 @@ import { AlertController, ToastController } from '@ionic/angular';
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton,
     IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption,
-    CommonModule, FormsModule
+    IonInput, CommonModule, FormsModule
   ],
 })
 export class SettingsPage implements OnInit {
@@ -26,6 +26,13 @@ export class SettingsPage implements OnInit {
   
   user: any = null;
   isAuthenticated = false;
+  isLoading = false;
+  
+  // Datos de login
+  loginData = {
+    email: '',
+    password: ''
+  };
   
   // Configuraciones de la app
   settings = {
@@ -50,7 +57,7 @@ export class SettingsPage implements OnInit {
   };
 
   constructor() {
-    addIcons({ person, notifications, shield, moon, sunny, language, help, logOut, save, mail });
+    addIcons({ person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle });
   }
 
   ngOnInit() {
@@ -258,5 +265,131 @@ export class SettingsPage implements OnInit {
   openPrivacyPolicy() {
     // Implementar política de privacidad
     this.showToast('Política de privacidad próximamente');
+  }
+
+  // ===== MÉTODOS DE AUTENTICACIÓN =====
+
+  async loginWithEmail() {
+    if (!this.loginData.email || !this.loginData.password) {
+      this.showToast('Por favor completa todos los campos');
+      return;
+    }
+
+    this.isLoading = true;
+    try {
+      await this.firebaseService.login(this.loginData.email, this.loginData.password);
+      this.showToast('¡Bienvenido!');
+      // Limpiar formulario
+      this.loginData = { email: '', password: '' };
+    } catch (error: any) {
+      console.error('Error en login:', error);
+      let message = 'Error al iniciar sesión';
+      
+      // Personalizar mensajes de error
+      if (error.code === 'auth/user-not-found') {
+        message = 'Usuario no encontrado';
+      } else if (error.code === 'auth/wrong-password') {
+        message = 'Contraseña incorrecta';
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'Email inválido';
+      } else if (error.code === 'auth/user-disabled') {
+        message = 'Usuario deshabilitado';
+      }
+      
+      this.showToast(message);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async loginWithGoogle() {
+    this.isLoading = true;
+    try {
+      await this.firebaseService.loginWithGoogle();
+      this.showToast('¡Bienvenido!');
+    } catch (error: any) {
+      console.error('Error en login con Google:', error);
+      let message = 'Error al iniciar sesión con Google';
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        message = 'Proceso cancelado por el usuario';
+      } else if (error.code === 'auth/popup-blocked') {
+        message = 'Popup bloqueado. Permite los popups e intenta nuevamente';
+      }
+      
+      this.showToast(message);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async showRegisterForm() {
+    const alert = await this.alertController.create({
+      header: 'Crear Cuenta',
+      inputs: [
+        {
+          name: 'email',
+          type: 'email',
+          placeholder: 'Correo electrónico'
+        },
+        {
+          name: 'password',
+          type: 'password',
+          placeholder: 'Contraseña (mínimo 6 caracteres)'
+        },
+        {
+          name: 'confirmPassword',
+          type: 'password',
+          placeholder: 'Confirmar contraseña'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Registrar',
+          handler: async (data) => {
+            if (!data.email || !data.password || !data.confirmPassword) {
+              this.showToast('Por favor completa todos los campos');
+              return false;
+            }
+            
+            if (data.password !== data.confirmPassword) {
+              this.showToast('Las contraseñas no coinciden');
+              return false;
+            }
+            
+            if (data.password.length < 6) {
+              this.showToast('La contraseña debe tener al menos 6 caracteres');
+              return false;
+            }
+            
+            try {
+              await this.firebaseService.register(data.email, data.password);
+              this.showToast('¡Cuenta creada exitosamente!');
+              return true;
+            } catch (error: any) {
+              console.error('Error en registro:', error);
+              let message = 'Error al crear la cuenta';
+              
+              if (error.code === 'auth/email-already-in-use') {
+                message = 'Este email ya está registrado';
+              } else if (error.code === 'auth/weak-password') {
+                message = 'La contraseña es muy débil';
+              } else if (error.code === 'auth/invalid-email') {
+                message = 'Email inválido';
+              }
+              
+              this.showToast(message);
+              return false;
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }
