@@ -1,11 +1,10 @@
 // Header
 .detail-header ion-toolbar {
-  --background: var(--ion-color-primary);
-  --color: white;
+  --border-color: var(--ion-color-step-150);
 }
 
 .detail-content {
-  --background: var(--ion-color-light, #f8f9fa);
+  --background: var(--ion-background-color);
 }
 
 // Hero Section
@@ -62,7 +61,7 @@
   position: relative;
   z-index: 3;
   padding: 24px;
-  color: white;
+  color: var(--ion-color-primary-contrast);
   width: 100%;
 }
 
@@ -258,7 +257,7 @@
     
     &:hover {
       --background: var(--ion-color-primary-tint);
-      --color: white;
+      --color: var(--ion-color-primary-contrast);
     }
   }
   
@@ -284,7 +283,7 @@
 .video-wrapper {
   overflow: hidden;
   transition: all 0.3s ease;
-  background: #000;
+  background: var(--ion-color-dark);
   border-radius: 8px;
   
   &:not(.expanded) {

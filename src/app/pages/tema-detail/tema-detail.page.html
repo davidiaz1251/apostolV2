@@ -1,5 +1,5 @@
 <ion-header [translucent]="true" class="detail-header">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
@@ -8,10 +8,10 @@
     <!-- Botón de acciones en el header -->
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="toggleFavorite()">
-        <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'" color="light"></ion-icon>
+        <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
       </ion-button>
       <ion-button fill="clear" (click)="shareContent()">
-        <ion-icon name="share-outline" color="light"></ion-icon>
+        <ion-icon name="share-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
