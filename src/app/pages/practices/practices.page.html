@@ -45,31 +45,33 @@
     <!-- Content -->
     <div *ngIf="!isLoading && !error" class="sections-container">
       <div *ngFor="let seccion of secciones" class="section-group">
-        <!-- Section header -->
-        <div class="section-header">
-          <h3>{{ seccion.nombre }}</h3>
-          <ion-chip color="medium" outline="true">
-            <ion-label>{{ getSeccionTemas(seccion.nombre).length }} temas</ion-label>
-          </ion-chip>
-        </div>
-
-        <!-- Temas list -->
-        <ion-list class="temas-list">
-          <ion-item 
-            *ngFor="let tema of getSeccionTemas(seccion.nombre)" 
-            button 
-            (click)="openPractice(tema)"
-            class="tema-item">
-            <ion-icon name="play-circle-outline" slot="start" color="primary"></ion-icon>
-            <ion-label>
-              <h4>{{ tema.titulo }}</h4>
-              <p *ngIf="tema.intro">{{ tema.intro }}</p>
-            </ion-label>
-            <ion-chip slot="end" color="primary" outline="true">
-              <ion-label>{{ tema.orden }}</ion-label>
+        <div *ngIf="getSeccionTemas(seccion.nombre).length > 0">
+          <!-- Section header -->
+          <div class="section-header">
+            <h3>{{ seccion.nombre }}</h3>
+            <ion-chip color="medium" outline="true">
+              <ion-label>{{ getSeccionTemas(seccion.nombre).length }} temas</ion-label>
             </ion-chip>
-          </ion-item>
-        </ion-list>
+          </div>
+
+          <!-- Temas list -->
+          <ion-list class="temas-list">
+            <ion-item 
+              *ngFor="let tema of getSeccionTemas(seccion.nombre)" 
+              button 
+              (click)="openPractice(tema)"
+              class="tema-item">
+              <ion-icon name="play-circle-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h4>{{ tema.titulo }}</h4>
+                <p *ngIf="tema.intro">{{ tema.intro }}</p>
+              </ion-label>
+              <ion-chip slot="end" color="primary" outline="true">
+                <ion-label>{{ tema.orden }}</ion-label>
+              </ion-chip>
+            </ion-item>
+          </ion-list>
+        </div>
       </div>
     </div>
 
