@@ -5,6 +5,7 @@ import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage
 import { RemoteConfig, getRemoteConfig, fetchAndActivate, getValue } from '@angular/fire/remote-config';
 import { Observable, BehaviorSubject, from } from 'rxjs';
 import { authState } from '@angular/fire/auth';
+import { Platform } from '@ionic/angular';
 import { OfflineService } from './offline.service';
 import { Tema, Seccion, Practica, SyncStatus } from '../interfaces/tema.interface';
 import { PracticaModel, SeccionModel } from '../models/models';
@@ -18,6 +19,7 @@ export class FirebaseService {
   private storage = inject(Storage);
   private remoteConfig = inject(RemoteConfig);
   private offlineService = inject(OfflineService);
+  private platform = inject(Platform);
 
   // Observable del estado de autenticación
   user$: Observable<User | null> = authState(this.auth);
@@ -308,7 +310,7 @@ export class FirebaseService {
 
   // Verificar si estamos en un dispositivo móvil
   private isMobileDevice(): boolean {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return this.platform.is('mobile') || this.platform.is('tablet');
   }
 
   // Método para verificar el resultado del redirect

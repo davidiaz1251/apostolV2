@@ -6,7 +6,7 @@ import { addIcons } from 'ionicons';
 import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle, refresh } from 'ionicons/icons';
 import { FirebaseService } from '../../services/firebase.service';
 import { ThemeService, ThemeMode } from '../../services/theme.service';
-import { AlertController, ToastController } from '@ionic/angular/standalone';
+import { AlertController, ToastController, Platform } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -25,6 +25,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
   private cdr = inject(ChangeDetectorRef);
+  private platform = inject(Platform);
   
   private userSubscription?: Subscription;
   
@@ -120,7 +121,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   // Verificar si estamos en un dispositivo móvil
   private isMobileDevice(): boolean {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return this.platform.is('mobile') || this.platform.is('tablet');
   }
 
   loadUserData() {
