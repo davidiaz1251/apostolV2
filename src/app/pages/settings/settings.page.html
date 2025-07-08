@@ -68,6 +68,7 @@
             <ion-icon name="notifications" slot="start"></ion-icon>
             <ion-label>Notificaciones</ion-label>
             <ion-toggle 
+              [disabled]="true"
               [(ngModel)]="settings.notifications" 
               (ionChange)="saveSettings()">
             </ion-toggle>

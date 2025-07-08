@@ -1,11 +1,17 @@
+/* Variables CSS para consistencia de colores */
 .container {
-  padding: 16px;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: 80px;
+  --settings-item-background: var(--ion-background-color);
+  --settings-item-color: var(--ion-text-color);
+  --settings-item-border: transparent;
 }
 
-// Theme selector styles
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Theme selector styles */
 .theme-selector {
   ion-select {
     max-width: none;
@@ -86,11 +92,29 @@
   
   ion-list {
     padding: 0;
+    background: transparent !important;
+    --ion-background-color: transparent;
   }
   
   ion-item {
     --padding-start: 0;
     --inner-padding-end: 0;
+    --background: transparent !important;
+    --background-hover: var(--ion-color-step-50) !important;
+    --background-activated: var(--ion-color-step-100) !important;
+    --color: var(--settings-item-color) !important;
+    --border-color: var(--settings-item-border);
+    border: none;
+    background: transparent !important;
+    
+    .item-native {
+      background: transparent !important;
+    }
+    
+    .item-inner {
+      background: transparent !important;
+      border: none !important;
+    }
     
     ion-icon {
       margin-right: 16px;
@@ -100,12 +124,17 @@
     h3 {
       margin: 0 0 4px 0;
       font-weight: 500;
+      color: var(--settings-item-color);
     }
     
     p {
       margin: 0;
       font-size: 0.85rem;
       color: var(--ion-color-medium);
+    }
+    
+    ion-label {
+      color: var(--settings-item-color);
     }
   }
 }
@@ -159,6 +188,37 @@ body.dark {
     background: var(--ion-card-background);
   }
   
+  /* Arreglar items oscuros en dispositivos móviles */
+  .settings-card ion-item,
+  .security-card ion-item,
+  .help-card ion-item {
+    --background: var(--ion-card-background) !important;
+    --background-hover: var(--ion-color-step-100) !important;
+    --background-activated: var(--ion-color-step-150) !important;
+    --color: var(--ion-text-color) !important;
+    background: var(--ion-card-background) !important;
+    
+    .item-native {
+      background: var(--ion-card-background) !important;
+    }
+    
+    .item-inner {
+      background: var(--ion-card-background) !important;
+    }
+    
+    h3 {
+      color: var(--ion-text-color) !important;
+    }
+    
+    p {
+      color: var(--ion-color-medium) !important;
+    }
+    
+    ion-label {
+      color: var(--ion-text-color) !important;
+    }
+  }
+  
   .login-content {
     ion-icon {
       color: var(--ion-color-medium);
@@ -174,7 +234,7 @@ body.dark {
   }
 }
 
-/* Responsive */
+/* Estilos específicos para dispositivos móviles */
 @media (max-width: 768px) {
   .container {
     padding: 12px;
@@ -184,6 +244,93 @@ body.dark {
     .avatar {
       width: 50px;
       height: 50px;
+    }
+  }
+  
+  .settings-card,
+  .security-card,
+  .help-card {
+    ion-item {
+      --background: var(--ion-background-color);
+      --background-hover: var(--ion-color-step-50);
+      --background-activated: var(--ion-color-step-100);
+      --min-height: 56px;
+      
+      ion-icon {
+        color: var(--ion-color-medium);
+        font-size: 20px;
+      }
+      
+      h3 {
+        color: var(--ion-text-color);
+        font-size: 16px;
+        font-weight: 600;
+      }
+      
+      p {
+        color: var(--ion-color-medium);
+        font-size: 14px;
+      }
+      
+      ion-label {
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}
+
+/* Tema oscuro específico para móviles */
+@media (max-width: 768px) {
+  body.dark .settings-card ion-item,
+  body.dark .security-card ion-item,
+  body.dark .help-card ion-item {
+    --background: var(--ion-background-color);
+    --background-hover: var(--ion-color-step-100);
+    --background-activated: var(--ion-color-step-150);
+    
+    h3, ion-label {
+      color: var(--ion-text-color) !important;
+    }
+    
+    p {
+      color: var(--ion-color-medium) !important;
+    }
+  }
+}
+
+/* Forzar fondos transparentes en todos los elementos */
+.settings-card ion-item,
+.security-card ion-item,
+.help-card ion-item {
+  background: transparent !important;
+  --background: transparent !important;
+  --ion-item-background: transparent !important;
+}
+
+.settings-card ion-item .item-native,
+.security-card ion-item .item-native,
+.help-card ion-item .item-native {
+  background: transparent !important;
+}
+
+.settings-card ion-item .item-inner,
+.security-card ion-item .item-inner,
+.help-card ion-item .item-inner {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Tema claro específico */
+body:not(.dark) {
+  .settings-card ion-item,
+  .security-card ion-item,
+  .help-card ion-item {
+    --background: var(--ion-background-color) !important;
+    --background-hover: var(--ion-color-light) !important;
+    background: var(--ion-background-color) !important;
+    
+    .item-native {
+      background: var(--ion-background-color) !important;
     }
   }
 }
@@ -291,7 +438,7 @@ ion-toggle {
       margin-right: 8px;
     }
     
-    // Mejoras para móviles
+    /* Mejoras para móviles */
     @media (max-width: 768px) {
       height: 52px;
       font-size: 16px;
