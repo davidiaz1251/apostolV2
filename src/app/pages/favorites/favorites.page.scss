@@ -95,38 +95,37 @@
         ion-icon {
           margin-right: 6px;
           font-size: 18px;
+          color: var(--ion-color-medium);
+          transition: color 0.2s ease;
         }
         
         ion-label {
           font-size: 14px;
           font-weight: 500;
+          color: var(--ion-color-medium);
+          transition: color 0.2s ease;
         }
-      }
-    }
-  }
-}
-
-// Versión responsive para dispositivos pequeños
-@media (max-width: 768px) {
-  .controls-section {
-    .view-controls,
-    .sort-controls {
-      ion-segment {
-        min-height: 32px;
         
-        ion-segment-button {
-          --padding-top: 4px;
-          --padding-bottom: 4px;
-          --padding-start: 6px;
-          --padding-end: 6px;
-          min-height: 32px;
-          
+        // Estado seleccionado (fix para iOS)
+        &.segment-button-checked {
           ion-icon {
-            font-size: 14px;
+            color: var(--ion-color-primary) !important;
           }
           
           ion-label {
-            font-size: 11px;
+            color: var(--ion-color-primary) !important;
+            font-weight: 600;
+          }
+        }
+        
+        // Estado hover/active
+        &:hover {
+          ion-icon {
+            color: var(--ion-color-primary-tint);
+          }
+          
+          ion-label {
+            color: var(--ion-color-primary-tint);
           }
         }
       }
@@ -398,6 +397,18 @@
           
           ion-label {
             font-size: 13px;
+          }
+          
+          // Estado seleccionado en móvil
+          &.segment-button-checked {
+            ion-icon {
+              color: var(--ion-color-primary) !important;
+            }
+            
+            ion-label {
+              color: var(--ion-color-primary) !important;
+              font-weight: 600;
+            }
           }
         }
       }
