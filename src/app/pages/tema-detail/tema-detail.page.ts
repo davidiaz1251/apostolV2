@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { 
@@ -36,6 +36,7 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private firebaseService = inject(FirebaseService);
+  private cdr = inject(ChangeDetectorRef);
   
   tema: Tema | null = null;
   videos: string[] = [];
@@ -218,7 +219,7 @@ export class TemaDetailPage implements OnInit, OnDestroy {
       if (this.isPaused) {
         this.resumeSpeech();
       } else {
-        this.pauseSpeech();
+        this.stopSpeech();
       }
     } else {
       this.startSpeech();
@@ -230,6 +231,10 @@ export class TemaDetailPage implements OnInit, OnDestroy {
 
     // Detener cualquier reproducción previa
     this.stopSpeech();
+
+    // Actualizar estados inmediatamente
+    this.isPlaying = true;
+    this.isPaused = false;
 
     // Crear una nueva utterance
     this.currentSpeechUtterance = new SpeechSynthesisUtterance();
@@ -247,6 +252,7 @@ export class TemaDetailPage implements OnInit, OnDestroy {
 
     // Event listeners
     this.currentSpeechUtterance.onstart = () => {
+      // Confirmar que está reproduciendo
       this.isPlaying = true;
       this.isPaused = false;
     };
@@ -278,12 +284,14 @@ export class TemaDetailPage implements OnInit, OnDestroy {
 
   private pauseSpeech() {
     if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      this.isPaused = true;
       speechSynthesis.pause();
     }
   }
 
   private resumeSpeech() {
     if (speechSynthesis.paused) {
+      this.isPaused = false;
       speechSynthesis.resume();
     }
   }
@@ -295,6 +303,19 @@ export class TemaDetailPage implements OnInit, OnDestroy {
     this.isPlaying = false;
     this.isPaused = false;
     this.currentSpeechUtterance = null;
+  }
+
+  private syncSpeechState() {
+    // Sincronizar estado con la Speech API
+    if (!speechSynthesis.speaking && !speechSynthesis.pending) {
+      this.isPlaying = false;
+      this.isPaused = false;
+    } else if (speechSynthesis.paused) {
+      this.isPaused = true;
+    } else if (speechSynthesis.speaking) {
+      this.isPlaying = true;
+      this.isPaused = false;
+    }
   }
 
   getSpeechButtonIcon(): string {
