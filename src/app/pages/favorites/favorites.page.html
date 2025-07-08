@@ -1,0 +1,218 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="heart" color="primary"></ion-icon>
+      Favoritos
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="clearAllFavorites()" [disabled]="favorites.length === 0">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pulling-icon="chevron-down-circle-outline"
+      pulling-text="Desliza para actualizar"
+      refreshing-spinner="circles"
+      refreshing-text="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Estado vacío -->
+  <div *ngIf="favorites.length === 0" class="empty-state">
+    <ion-icon name="heart-outline" color="medium" size="large"></ion-icon>
+    <h3>No tienes favoritos aún</h3>
+    <p>Marca tus temas favoritos con el corazón para encontrarlos aquí fácilmente.</p>
+    <ion-button fill="outline" routerLink="/home">
+      <ion-icon name="book-outline" slot="start"></ion-icon>
+      Explorar Temas
+    </ion-button>
+  </div>
+
+  <!-- Contenido con favoritos -->
+  <div *ngIf="favorites.length > 0" class="favorites-content">
+    
+    <!-- Barra de búsqueda -->
+    <div class="search-section">
+      <ion-searchbar 
+        (ionInput)="onSearchChange($event)"
+        placeholder="Buscar en favoritos..."
+        show-clear-button="focus"
+        debounce="300">
+      </ion-searchbar>
+    </div>
+
+    <!-- Controles de vista y ordenamiento -->
+    <div class="controls-section">
+      <div class="view-controls">
+        <ion-segment 
+          [(ngModel)]="viewMode" 
+          (ionChange)="onViewModeChange($event)"
+          value="grid">
+          <ion-segment-button value="grid">
+            <ion-icon name="grid-outline"></ion-icon>
+            <ion-label>Grid</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="list">
+            <ion-icon name="list-outline"></ion-icon>
+            <ion-label>Lista</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <div class="sort-controls">
+        <ion-segment 
+          [(ngModel)]="sortBy" 
+          (ionChange)="onSortChange($event)"
+          value="recent">
+          <ion-segment-button value="recent">
+            <ion-icon name="time-outline"></ion-icon>
+            <ion-label>Reciente</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="title">
+            <ion-icon name="document-text"></ion-icon>
+            <ion-label>Título</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="section">
+            <ion-icon name="book-outline"></ion-icon>
+            <ion-label>Sección</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+    </div>
+
+    <!-- Contador de resultados -->
+    <div class="results-info">
+      <ion-text color="medium">
+        <p>{{ filteredFavorites.length }} de {{ favorites.length }} favoritos</p>
+      </ion-text>
+    </div>
+
+    <!-- Vista Grid -->
+    <div *ngIf="viewMode === 'grid'" class="grid-view">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let tema of filteredFavorites">
+            <ion-card class="tema-card" (click)="openTema(tema)">
+              <div class="card-image">
+                <ion-img 
+                  *ngIf="tema.img" 
+                  [src]="tema.img" 
+                  [alt]="tema.titulo">
+                </ion-img>
+                <div *ngIf="!tema.img" class="placeholder-image">
+                  <ion-icon name="document-text" size="large"></ion-icon>
+                </div>
+                
+                <!-- Overlay con acciones -->
+                <div class="card-overlay">
+                  <ion-button 
+                    fill="clear" 
+                    size="small" 
+                    (click)="removeFavorite(tema, $event)"
+                    class="action-button">
+                    <ion-icon name="heart" color="danger"></ion-icon>
+                  </ion-button>
+                  <ion-button 
+                    fill="clear" 
+                    size="small" 
+                    (click)="shareContent(tema, $event)"
+                    class="action-button">
+                    <ion-icon name="share-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+
+              <ion-card-header>
+                <div class="card-header-content">
+                  <ion-chip color="primary" outline="true">
+                    <ion-label>{{ getSectionDisplayName(tema.seccion) }}</ion-label>
+                  </ion-chip>
+                  <ion-chip *ngIf="hasVideo(tema)" color="success" outline="true">
+                    <ion-icon name="play-circle" slot="start"></ion-icon>
+                    <ion-label>Video</ion-label>
+                  </ion-chip>
+                </div>
+                <ion-card-title>{{ tema.titulo }}</ion-card-title>
+              </ion-card-header>
+
+              <ion-card-content>
+                <p class="tema-intro">{{ tema.intro }}</p>
+                <div class="tema-order">
+                  <ion-text color="medium">
+                    <small>Tema {{ tema.orden }}</small>
+                  </ion-text>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Vista Lista -->
+    <div *ngIf="viewMode === 'list'" class="list-view">
+      <ion-list>
+        <ion-item 
+          *ngFor="let tema of filteredFavorites" 
+          (click)="openTema(tema)"
+          button="true"
+          detail="true">
+          
+          <ion-thumbnail slot="start">
+            <ion-img 
+              *ngIf="tema.img" 
+              [src]="tema.img" 
+              [alt]="tema.titulo">
+            </ion-img>
+            <div *ngIf="!tema.img" class="placeholder-thumbnail">
+              <ion-icon name="document-text"></ion-icon>
+            </div>
+          </ion-thumbnail>
+
+          <ion-label>
+            <h3>{{ tema.titulo }}</h3>
+            <p>{{ tema.intro }}</p>
+            <div class="item-chips">
+              <ion-chip color="primary" outline="true">
+                <ion-label>{{ getSectionDisplayName(tema.seccion) }}</ion-label>
+              </ion-chip>
+              <ion-chip *ngIf="hasVideo(tema)" color="success" outline="true">
+                <ion-icon name="play-circle" slot="start"></ion-icon>
+                <ion-label>Video</ion-label>
+              </ion-chip>
+              <ion-text color="medium">
+                <small>Tema {{ tema.orden }}</small>
+              </ion-text>
+            </div>
+          </ion-label>
+
+          <ion-buttons slot="end">
+            <ion-button 
+              fill="clear" 
+              (click)="removeFavorite(tema, $event)">
+              <ion-icon name="heart" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button 
+              fill="clear" 
+              (click)="shareContent(tema, $event)">
+              <ion-icon name="share-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Estado sin resultados de búsqueda -->
+    <div *ngIf="filteredFavorites.length === 0 && searchTerm.trim()" class="no-results">
+      <ion-icon name="search-outline" color="medium" size="large"></ion-icon>
+      <h3>No se encontraron resultados</h3>
+      <p>No hay favoritos que coincidan con "{{ searchTerm }}"</p>
+    </div>
+  </div>
+</ion-content>

@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonList, IonItem, IonLabel, IonBadge } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -10,6 +10,9 @@ import {
   searchOutline,
   bookmarkOutline
 } from 'ionicons/icons';
+import { Subscription } from 'rxjs';
+
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-list',
@@ -17,11 +20,15 @@ import {
   styleUrls: ['./list.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton,
-    IonList, IonItem, IonLabel, CommonModule
+    IonList, IonItem, IonLabel, IonBadge, CommonModule
   ],
 })
-export class ListPage implements OnInit {
+export class ListPage implements OnInit, OnDestroy {
   private router = inject(Router);
+  private favoritesService = inject(FavoritesService);
+  
+  favoritesCount = 0;
+  private subscription?: Subscription;
 
   constructor() {
     addIcons({ 
@@ -34,7 +41,13 @@ export class ListPage implements OnInit {
   }
 
   ngOnInit() {
-    // Inicialización del componente
+    this.subscription = this.favoritesService.favorites$.subscribe(favorites => {
+      this.favoritesCount = favorites.length;
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 
   navigateToSection(section: string) {
@@ -60,7 +73,6 @@ export class ListPage implements OnInit {
   }
 
   openFavorites() {
-    console.log('Abriendo favoritos');
-    // Implementar funcionalidad de favoritos
+    this.router.navigate(['/favorites']);
   }
 }

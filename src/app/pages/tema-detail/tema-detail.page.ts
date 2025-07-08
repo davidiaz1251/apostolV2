@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton, 
-  IonButton, IonIcon, IonSpinner, IonChip, IonLabel, IonFab, IonFabButton 
+  IonButton, IonIcon, IonSpinner, IonChip, IonLabel, IonFab, IonFabButton,
+  ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -14,6 +15,7 @@ import {
 import { Subscription } from 'rxjs';
 
 import { FirebaseService } from '../../services/firebase.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { Tema } from '../../interfaces/tema.interface';
 import { StyleDocumentoPipe } from '../../pipes/style-documento.pipe';
 import { VideoPipe } from '../../pipes/video.pipe';
@@ -36,7 +38,9 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private firebaseService = inject(FirebaseService);
+  private favoritesService = inject(FavoritesService);
   private cdr = inject(ChangeDetectorRef);
+  private toastController = inject(ToastController);
   
   tema: Tema | null = null;
   videos: string[] = [];
@@ -152,17 +156,36 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   }
 
   private checkFavoriteStatus() {
-    // TODO: Implementar lógica de favoritos
-    this.isFavorite = false;
+    if (this.tema) {
+      this.isFavorite = this.favoritesService.isFavorite(this.tema.id);
+    }
   }
 
   // Métodos de acción
-  toggleFavorite() {
+  async toggleFavorite() {
     if (!this.tema) return;
     
-    this.isFavorite = !this.isFavorite;
-    // TODO: Implementar lógica de favoritos en el servicio
-    console.log('Toggle favorite for tema:', this.tema.id, this.isFavorite);
+    this.isFavorite = this.favoritesService.toggleFavorite(this.tema);
+    
+    // Mostrar toast de confirmación
+    const toast = await this.toastController.create({
+      message: this.isFavorite ? 
+        `"${this.tema.titulo}" agregado a favoritos` : 
+        `"${this.tema.titulo}" removido de favoritos`,
+      duration: 2000,
+      position: 'bottom',
+      color: this.isFavorite ? 'success' : 'medium',
+      buttons: [
+        {
+          text: 'Ver favoritos',
+          handler: () => {
+            this.router.navigate(['/favorites']);
+          }
+        }
+      ]
+    });
+    
+    await toast.present();
   }
 
   shareContent() {

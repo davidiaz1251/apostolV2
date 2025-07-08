@@ -56,6 +56,7 @@
         <ion-button fill="outline" size="default" (click)="openFavorites()">
           <ion-icon name="bookmark-outline" slot="start"></ion-icon>
           Favoritos
+          <ion-badge *ngIf="favoritesCount > 0" color="danger" slot="end">{{ favoritesCount }}</ion-badge>
         </ion-button>
       </div>
     </div>
