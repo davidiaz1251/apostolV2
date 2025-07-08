@@ -74,8 +74,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    // Este método se ejecuta cada vez que la página se vuelve visible
-    // Forzar actualización de la vista
+    // Forzar actualización de la vista cuando la página se vuelve visible
     this.cdr.detectChanges();
     
     // Verificar el estado de autenticación actual
@@ -113,6 +112,9 @@ export class SettingsPage implements OnInit, OnDestroy {
       if (error.code !== 'auth/no-auth-event') {
         this.showToast('Error al completar el inicio de sesión con Google');
       }
+    } finally {
+      // Resetear isLoading después del redirect
+      this.isLoading = false;
     }
   }
 
@@ -386,10 +388,11 @@ export class SettingsPage implements OnInit, OnDestroy {
       if (result && 'pending' in result && result.pending) {
         // El usuario será redirigido automáticamente
         // El resultado se manejará cuando regrese a la app
+        // En móvil, no resetear isLoading aquí ya que el proceso continúa
         return;
       }
       
-      // Si estamos en desktop, mostramos el mensaje de éxito y forzamos actualización
+      // Si estamos en desktop, mostramos el mensaje de éxito
       this.showToast('¡Bienvenido!');
       
       // Forzar actualización de la vista
@@ -413,7 +416,10 @@ export class SettingsPage implements OnInit, OnDestroy {
       
       this.showToast(message);
     } finally {
-      this.isLoading = false;
+      // Solo resetear isLoading en desktop o si hay error
+      if (!this.isMobileDevice()) {
+        this.isLoading = false;
+      }
     }
   }
 
