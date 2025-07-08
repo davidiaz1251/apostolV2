@@ -23,7 +23,20 @@
       <ion-card-content>
         <div class="profile-info">
           <div class="avatar">
-            <ion-icon name="person" size="large"></ion-icon>
+            <img 
+              *ngIf="profile.photoURL" 
+              [src]="profile.photoURL" 
+              [alt]="profile.displayName || 'Usuario'" 
+              class="avatar-image"
+              (load)="onImageLoad()"
+              (error)="onImageError($event)"
+            />
+            <ion-icon 
+              *ngIf="!profile.photoURL" 
+              name="person" 
+              size="large"
+              class="avatar-icon"
+            ></ion-icon>
           </div>
           <div class="user-details">
             <h3>{{ profile.displayName || 'Usuario' }}</h3>
@@ -31,10 +44,15 @@
             <p class="bio" *ngIf="profile.bio">{{ profile.bio }}</p>
           </div>
         </div>
-        <ion-button fill="outline" (click)="updateProfile()">
-          <ion-icon name="save" slot="start"></ion-icon>
-          Editar Perfil
-        </ion-button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <ion-button fill="outline" (click)="updateProfile()">
+            <ion-icon name="save" slot="start"></ion-icon>
+            Editar Perfil
+          </ion-button>
+          <ion-button fill="clear" size="small" (click)="forceRefresh()">
+            <ion-icon name="refresh" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
 

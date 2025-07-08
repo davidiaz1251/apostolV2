@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonIcon, IonButton, IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonSelect, IonSelectOption, IonInput } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle } from 'ionicons/icons';
+import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle, refresh } from 'ionicons/icons';
 import { FirebaseService } from '../../services/firebase.service';
 import { ThemeService, ThemeMode } from '../../services/theme.service';
 import { AlertController, ToastController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -18,11 +19,14 @@ import { AlertController, ToastController } from '@ionic/angular';
     IonInput, CommonModule, FormsModule
   ],
 })
-export class SettingsPage implements OnInit {
+export class SettingsPage implements OnInit, OnDestroy {
   private firebaseService = inject(FirebaseService);
   private themeService = inject(ThemeService);
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
+  private cdr = inject(ChangeDetectorRef);
+  
+  private userSubscription?: Subscription;
   
   user: any = null;
   isAuthenticated = false;
@@ -37,7 +41,7 @@ export class SettingsPage implements OnInit {
   // Configuraciones de la app
   settings = {
     theme: 'system' as ThemeMode,
-    notifications: true,
+    notifications: false,
     language: 'es',
     autoSave: true
   };
@@ -53,11 +57,12 @@ export class SettingsPage implements OnInit {
   profile = {
     displayName: '',
     email: '',
-    bio: ''
+    bio: '',
+    photoURL: ''
   };
 
   constructor() {
-    addIcons({ person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle });
+    addIcons({ person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle, refresh });
   }
 
   ngOnInit() {
@@ -68,12 +73,40 @@ export class SettingsPage implements OnInit {
     this.themeService.initSystemThemeListener();
   }
 
+  ionViewWillEnter() {
+    // Este método se ejecuta cada vez que la página se vuelve visible
+    // Forzar actualización de la vista
+    this.cdr.detectChanges();
+    
+    // Verificar el estado de autenticación actual
+    const currentUser = this.firebaseService.getCurrentUser();
+    if (currentUser && !this.isAuthenticated) {
+      // Si hay un usuario autenticado pero no se ha actualizado la vista
+      this.user = currentUser;
+      this.isAuthenticated = true;
+      this.profile.email = currentUser.email || '';
+      this.profile.displayName = currentUser.displayName || '';
+      this.profile.photoURL = currentUser.photoURL || '';
+      this.cdr.detectChanges();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
+
   // Verificar si el usuario regresó de un redirect de Google
   private async checkGoogleRedirectResult() {
     try {
       const result = await this.firebaseService.checkRedirectResult();
       if (result && result.user) {
         this.showToast('¡Bienvenido! Has iniciado sesión con Google');
+        // Forzar actualización de la vista después del redirect
+        setTimeout(() => {
+          this.cdr.detectChanges();
+        }, 500);
       }
     } catch (error: any) {
       console.error('Error verificando redirect result:', error);
@@ -89,13 +122,28 @@ export class SettingsPage implements OnInit {
   }
 
   loadUserData() {
-    this.firebaseService.user$.subscribe(user => {
+    this.userSubscription = this.firebaseService.user$.subscribe(user => {
+      console.log('User state changed:', user);
       this.user = user;
       this.isAuthenticated = !!user;
+      
       if (user) {
         this.profile.email = user.email || '';
         this.profile.displayName = user.displayName || '';
+        this.profile.photoURL = user.photoURL || '';
+        console.log('Profile updated:', this.profile);
+      } else {
+        // Reset profile data when user logs out
+        this.profile = {
+          displayName: '',
+          email: '',
+          bio: '',
+          photoURL: ''
+        };
       }
+      
+      // Forzar detección de cambios para actualizar la vista inmediatamente
+      this.cdr.detectChanges();
     });
   }
 
@@ -341,8 +389,14 @@ export class SettingsPage implements OnInit {
         return;
       }
       
-      // Si estamos en desktop, mostramos el mensaje de éxito
+      // Si estamos en desktop, mostramos el mensaje de éxito y forzamos actualización
       this.showToast('¡Bienvenido!');
+      
+      // Forzar actualización de la vista
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 500);
+      
     } catch (error: any) {
       console.error('Error en login con Google:', error);
       let message = 'Error al iniciar sesión con Google';
@@ -431,5 +485,33 @@ export class SettingsPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  // Método para forzar actualización manual de la vista
+  forceRefresh() {
+    const currentUser = this.firebaseService.getCurrentUser();
+    if (currentUser) {
+      this.user = currentUser;
+      this.isAuthenticated = true;
+      this.profile.email = currentUser.email || '';
+      this.profile.displayName = currentUser.displayName || '';
+      this.profile.photoURL = currentUser.photoURL || '';
+      this.cdr.detectChanges();
+      this.showToast('Perfil actualizado');
+    }
+  }
+
+  // Handle image loading success
+  onImageLoad() {
+    console.log('User profile image loaded successfully');
+    this.cdr.detectChanges();
+  }
+
+  // Handle image loading errors
+  onImageError(event: any) {
+    console.warn('Error loading user profile image:', event);
+    // Clear the photoURL to show the default icon
+    this.profile.photoURL = '';
+    this.cdr.detectChanges();
   }
 }

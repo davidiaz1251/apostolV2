@@ -22,6 +22,11 @@ export class FirebaseService {
   // Observable del estado de autenticación
   user$: Observable<User | null> = authState(this.auth);
 
+  // Método público para obtener el usuario actual
+  getCurrentUser(): User | null {
+    return this.auth.currentUser;
+  }
+
   // BehaviorSubjects para datos offline
   private temasSubject = new BehaviorSubject<Tema[]>([]);
   private seccionesSubject = new BehaviorSubject<Seccion[]>([]);
