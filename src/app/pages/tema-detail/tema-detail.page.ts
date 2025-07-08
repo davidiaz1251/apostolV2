@@ -8,7 +8,8 @@ import {
 import { addIcons } from 'ionicons';
 import { 
   heartOutline, heart, shareOutline, documentText, playCircle, 
-  chevronUp, chevronDown, chevronBack, chevronForward, home, alertCircle 
+  chevronUp, chevronDown, chevronBack, chevronForward, home, alertCircle,
+  volumeHighOutline, volumeMuteOutline, stopCircleOutline
 } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 
@@ -43,6 +44,12 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   showScrollToTop = false;
   expandedVideos: boolean[] = [];
   
+  // Text-to-Speech
+  isPlaying = false;
+  isPaused = false;
+  currentSpeechUtterance: SpeechSynthesisUtterance | null = null;
+  speechSupported = false;
+  
   // Navegación entre temas
   previousTema: Tema | null = null;
   nextTema: Tema | null = null;
@@ -53,8 +60,12 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   constructor() {
     addIcons({ 
       heartOutline, heart, shareOutline, documentText, playCircle,
-      chevronUp, chevronDown, chevronBack, chevronForward, home, alertCircle 
+      chevronUp, chevronDown, chevronBack, chevronForward, home, alertCircle,
+      volumeHighOutline, volumeMuteOutline, stopCircleOutline
     });
+    
+    // Verificar soporte para Speech API
+    this.speechSupported = 'speechSynthesis' in window;
   }
 
   ngOnInit() {
@@ -64,6 +75,7 @@ export class TemaDetailPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.stopSpeech();
   }
 
   private loadTema() {
@@ -196,5 +208,104 @@ export class TemaDetailPage implements OnInit, OnDestroy {
   // Método para navegar de vuelta a home
   goHome() {
     this.router.navigate(['/home']);
+  }
+
+  // Text-to-Speech methods
+  toggleSpeech() {
+    if (!this.speechSupported || !this.tema?.texto) return;
+
+    if (this.isPlaying) {
+      if (this.isPaused) {
+        this.resumeSpeech();
+      } else {
+        this.pauseSpeech();
+      }
+    } else {
+      this.startSpeech();
+    }
+  }
+
+  private startSpeech() {
+    if (!this.tema?.texto) return;
+
+    // Detener cualquier reproducción previa
+    this.stopSpeech();
+
+    // Crear una nueva utterance
+    this.currentSpeechUtterance = new SpeechSynthesisUtterance();
+    
+    // Extraer texto plano del HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = this.tema.texto;
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    this.currentSpeechUtterance.text = textContent;
+    this.currentSpeechUtterance.lang = 'es-ES';
+    this.currentSpeechUtterance.rate = 0.9;
+    this.currentSpeechUtterance.pitch = 0.7;
+    this.currentSpeechUtterance.volume = 1;
+
+    // Event listeners
+    this.currentSpeechUtterance.onstart = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+    };
+
+    this.currentSpeechUtterance.onend = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.currentSpeechUtterance = null;
+    };
+
+    this.currentSpeechUtterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event);
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.currentSpeechUtterance = null;
+    };
+
+    this.currentSpeechUtterance.onpause = () => {
+      this.isPaused = true;
+    };
+
+    this.currentSpeechUtterance.onresume = () => {
+      this.isPaused = false;
+    };
+
+    // Iniciar la reproducción
+    speechSynthesis.speak(this.currentSpeechUtterance);
+  }
+
+  private pauseSpeech() {
+    if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      speechSynthesis.pause();
+    }
+  }
+
+  private resumeSpeech() {
+    if (speechSynthesis.paused) {
+      speechSynthesis.resume();
+    }
+  }
+
+  private stopSpeech() {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.currentSpeechUtterance = null;
+  }
+
+  getSpeechButtonIcon(): string {
+    if (!this.isPlaying) return 'volume-high-outline';
+    if (this.isPaused) return 'volume-high-outline';
+    return 'stop-circle-outline';
+  }
+
+  getSpeechButtonText(): string {
+    if (!this.isPlaying) return 'Escuchar';
+    if (this.isPaused) return 'Continuar';
+    return 'Detener';
   }
 }

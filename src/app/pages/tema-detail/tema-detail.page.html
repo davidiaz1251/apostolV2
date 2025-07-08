@@ -61,6 +61,18 @@
           <ion-icon name="document-text" color="primary"></ion-icon>
           Contenido
         </h2>
+        
+        <!-- Botón de Text-to-Speech -->
+        <ion-button 
+          *ngIf="speechSupported && tema?.texto" 
+          fill="outline" 
+          size="small" 
+          (click)="toggleSpeech()"
+          [disabled]="!tema.texto"
+          class="speech-button">
+          <ion-icon [name]="getSpeechButtonIcon()" slot="start"></ion-icon>
+          {{ getSpeechButtonText() }}
+        </ion-button>
       </div>
       
       <div class="content-card">

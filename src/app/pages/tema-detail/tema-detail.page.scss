@@ -122,6 +122,28 @@
   color: var(--ion-color-dark);
 }
 
+// Botón de Text-to-Speech
+.speech-button {
+  --border-radius: 20px;
+  --color: var(--ion-color-primary);
+  --border-color: var(--ion-color-primary);
+  height: 36px;
+  
+  &:hover {
+    --background: var(--ion-color-primary-tint);
+  }
+  
+  &[disabled] {
+    --color: var(--ion-color-medium);
+    --border-color: var(--ion-color-medium);
+    opacity: 0.5;
+  }
+  
+  ion-icon {
+    font-size: 1.1rem;
+  }
+}
+
 .content-card {
   margin: 0 20px;
   background: var(--ion-color-step-50, white);
