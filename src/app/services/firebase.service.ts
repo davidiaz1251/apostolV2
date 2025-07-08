@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from '@angular/fire/auth';
 import { Firestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { RemoteConfig, getRemoteConfig, fetchAndActivate, getValue } from '@angular/fire/remote-config';
@@ -42,6 +42,9 @@ export class FirebaseService {
 
   constructor() {
     this.initializeOfflineData();
+    this.checkRedirectResult().catch(error => {
+      console.error('Error verificando redirect result:', error);
+    });
   }
 
   // Inicializar datos offline
@@ -279,7 +282,34 @@ export class FirebaseService {
       const provider = new GoogleAuthProvider();
       provider.addScope('email');
       provider.addScope('profile');
-      const result = await signInWithPopup(this.auth, provider);
+      
+      // Detectar si estamos en un dispositivo móvil
+      const isMobile = this.isMobileDevice();
+      
+      if (isMobile) {
+        // Usar redirect para dispositivos móviles
+        await signInWithRedirect(this.auth, provider);
+        // El resultado se manejará en el constructor con getRedirectResult
+        return { user: null, pending: true };
+      } else {
+        // Usar popup para desktop
+        const result = await signInWithPopup(this.auth, provider);
+        return result;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Verificar si estamos en un dispositivo móvil
+  private isMobileDevice(): boolean {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Método para verificar el resultado del redirect
+  async checkRedirectResult() {
+    try {
+      const result = await getRedirectResult(this.auth);
       return result;
     } catch (error) {
       throw error;

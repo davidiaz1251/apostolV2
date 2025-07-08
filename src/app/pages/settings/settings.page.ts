@@ -63,8 +63,29 @@ export class SettingsPage implements OnInit {
   ngOnInit() {
     this.loadUserData();
     this.loadSettings();
+    this.checkGoogleRedirectResult();
     // Inicializar el listener para cambios del sistema
     this.themeService.initSystemThemeListener();
+  }
+
+  // Verificar si el usuario regresó de un redirect de Google
+  private async checkGoogleRedirectResult() {
+    try {
+      const result = await this.firebaseService.checkRedirectResult();
+      if (result && result.user) {
+        this.showToast('¡Bienvenido! Has iniciado sesión con Google');
+      }
+    } catch (error: any) {
+      console.error('Error verificando redirect result:', error);
+      if (error.code !== 'auth/no-auth-event') {
+        this.showToast('Error al completar el inicio de sesión con Google');
+      }
+    }
+  }
+
+  // Verificar si estamos en un dispositivo móvil
+  private isMobileDevice(): boolean {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
   loadUserData() {
@@ -304,8 +325,23 @@ export class SettingsPage implements OnInit {
 
   async loginWithGoogle() {
     this.isLoading = true;
+    
+    // Mostrar mensaje específico para móviles
+    if (this.isMobileDevice()) {
+      this.showToast('Redirigiendo a Google...');
+    }
+    
     try {
-      await this.firebaseService.loginWithGoogle();
+      const result = await this.firebaseService.loginWithGoogle();
+      
+      // Si estamos en móvil, el resultado será { user: null, pending: true }
+      if (result && 'pending' in result && result.pending) {
+        // El usuario será redirigido automáticamente
+        // El resultado se manejará cuando regrese a la app
+        return;
+      }
+      
+      // Si estamos en desktop, mostramos el mensaje de éxito
       this.showToast('¡Bienvenido!');
     } catch (error: any) {
       console.error('Error en login con Google:', error);
@@ -315,6 +351,10 @@ export class SettingsPage implements OnInit {
         message = 'Proceso cancelado por el usuario';
       } else if (error.code === 'auth/popup-blocked') {
         message = 'Popup bloqueado. Permite los popups e intenta nuevamente';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        message = 'Solicitud cancelada. Intenta nuevamente';
+      } else if (error.code === 'auth/network-request-failed') {
+        message = 'Error de conexión. Verifica tu internet';
       }
       
       this.showToast(message);

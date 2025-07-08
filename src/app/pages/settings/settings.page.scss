@@ -290,6 +290,16 @@ ion-toggle {
       margin-bottom: 0;
       margin-right: 8px;
     }
+    
+    // Mejoras para móviles
+    @media (max-width: 768px) {
+      height: 52px;
+      font-size: 16px;
+      
+      ion-icon {
+        font-size: 20px;
+      }
+    }
   }
   
   .register-section {
