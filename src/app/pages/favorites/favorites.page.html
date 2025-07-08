@@ -25,7 +25,9 @@
 
   <!-- Estado vacío -->
   <div *ngIf="favorites.length === 0" class="empty-state">
-    <ion-icon name="heart-outline" color="medium" size="large"></ion-icon>
+    <div class="empty-icon">
+      <ion-icon name="heart-outline" color="medium"></ion-icon>
+    </div>
     <h3>No tienes favoritos aún</h3>
     <p>Marca tus temas favoritos con el corazón para encontrarlos aquí fácilmente.</p>
     <ion-button fill="outline" routerLink="/home">
@@ -210,7 +212,9 @@
 
     <!-- Estado sin resultados de búsqueda -->
     <div *ngIf="filteredFavorites.length === 0 && searchTerm.trim()" class="no-results">
-      <ion-icon name="search-outline" color="medium" size="large"></ion-icon>
+      <div class="no-results-icon">
+        <ion-icon name="search-outline" color="medium"></ion-icon>
+      </div>
       <h3>No se encontraron resultados</h3>
       <p>No hay favoritos que coincidan con "{{ searchTerm }}"</p>
     </div>
