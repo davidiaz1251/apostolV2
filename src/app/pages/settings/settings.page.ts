@@ -6,7 +6,7 @@ import { addIcons } from 'ionicons';
 import { person, notifications, shield, moon, sunny, language, help, logOut, save, mail, logIn, logoGoogle, refresh } from 'ionicons/icons';
 import { FirebaseService } from '../../services/firebase.service';
 import { ThemeService, ThemeMode } from '../../services/theme.service';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 
 @Component({
