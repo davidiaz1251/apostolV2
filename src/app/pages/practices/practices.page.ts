@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -47,6 +47,7 @@ import { Tema, Seccion } from '../../interfaces/tema.interface';
 export class PracticesPage implements OnInit, OnDestroy {
   private firebaseService = inject(FirebaseService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   secciones: Seccion[] = [];
   allTemas: { [key: string]: Tema[] } = {};
@@ -91,11 +92,15 @@ export class PracticesPage implements OnInit, OnDestroy {
         seccionesData = secciones;
         this.secciones = secciones;
         this.organizeTemasData(temasData, seccionesData);
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error obteniendo secciones:', error);
         this.error = 'Error al cargar las secciones';
         this.isLoading = false;
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       }
     });
 
@@ -105,11 +110,15 @@ export class PracticesPage implements OnInit, OnDestroy {
         console.log('📚 Temas obtenidos desde observable:', temas);
         temasData = temas;
         this.organizeTemasData(temasData, seccionesData);
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error obteniendo temas:', error);
         this.error = 'Error al cargar los temas';
         this.isLoading = false;
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       }
     });
 
@@ -148,6 +157,8 @@ export class PracticesPage implements OnInit, OnDestroy {
 
     this.isLoading = false;
     console.log('✅ Datos organizados correctamente');
+    // Detectar cambios manualmente para aplicaciones zoneless
+    this.cdr.detectChanges();
   }
 
   async forceSync() {

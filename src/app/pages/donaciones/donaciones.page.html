@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Donaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Donaciones</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <div class="content-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">
+          <ion-icon name="gift-outline" color="primary"></ion-icon>
+          Apoya Nuestra Misión
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-text-justify">
+        <p>
+          Tu generosidad nos permite continuar compartiendo la palabra de Dios y 
+          llevando el mensaje de amor y esperanza a más personas alrededor del mundo.
+        </p>
+        <p>
+          Cada donación, sin importar su tamaño, hace una diferencia significativa 
+          en nuestro ministerio y nos ayuda a mantener este contenido disponible 
+          para todos de forma gratuita.
+        </p>
+        <p>
+          <strong>¿Cómo puedes ayudar?</strong>
+        </p>
+        <ul>
+          <li>Donaciones únicas o recurrentes</li>
+          <li>Patrocinio de contenido específico</li>
+          <li>Apoyo a nuestros proyectos misioneros</li>
+          <li>Difusión de nuestro mensaje</li>
+        </ul>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Contenido dinámico desde Firebase -->
+    <ion-card *ngIf="documento && documento.texto">
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">Donación</ion-card-title>
+      </ion-card-header>
+      <ion-card-content [innerHTML]="documento.texto" class="ion-text-justify">
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de videos si están disponibles -->
+    <div *ngIf="videos && videos.length > 0" class="videos-section">
+      <h3>Videos Relacionados</h3>
+      <div *ngFor="let vid of videos" class="video-container">
+        <iframe 
+          width="100%" 
+          height="315" 
+          [src]="vid | video" 
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
+</ion-content>

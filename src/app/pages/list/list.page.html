@@ -19,7 +19,7 @@
     </div>
 
     <!-- Lista de opciones principales -->
-    <ion-list>
+    <ion-list lines="none">
       <ion-item button (click)="navigateToSection('practices')" detail="true">
         <ion-icon name="heart-outline" slot="start" color="primary"></ion-icon>
         <ion-label>
@@ -41,6 +41,14 @@
         <ion-label>
           <h3>Enseñanzas</h3>
           <p>Sabiduría de las escrituras</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button (click)="navigateToSection('donaciones')" detail="true">
+        <ion-icon name="gift-outline" slot="start" color="tertiary"></ion-icon>
+        <ion-label>
+          <h3>Donaciones</h3>
+          <p>Apoya nuestra misión cristiana</p>
         </ion-label>
       </ion-item>
     </ion-list>

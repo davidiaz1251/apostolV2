@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, inject, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonChip, IonLabel } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { FirebaseService } from '../../services/firebase.service';
@@ -20,6 +20,7 @@ import { register } from 'swiper/element/bundle';
 export class HomePage implements OnInit {
   private firebaseService = inject(FirebaseService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
   
   temas: Tema[] = [];
   secciones: Seccion[] = [];
@@ -41,6 +42,8 @@ export class HomePage implements OnInit {
       this.secciones = secciones;
       console.log('📂 Secciones cargadas:', this.secciones.length);
       this.agruparTemas();
+      // Detectar cambios manualmente para aplicaciones zoneless
+      this.cdr.detectChanges();
     });
 
     this.firebaseService.temas$.subscribe(temas => {
@@ -48,6 +51,8 @@ export class HomePage implements OnInit {
       console.log('📋 Temas cargados:', this.temas.length);
       this.agruparTemas();
       this.isLoading = false;
+      // Detectar cambios manualmente para aplicaciones zoneless
+      this.cdr.detectChanges();
     });
   }
 
@@ -68,6 +73,8 @@ export class HomePage implements OnInit {
     });
 
     console.log('📊 Temas agrupados:', this.temasAgrupados);
+    // Detectar cambios manualmente para aplicaciones zoneless
+    this.cdr.detectChanges();
   }
 
   getSecciones(): string[] {

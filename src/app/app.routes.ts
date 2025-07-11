@@ -34,6 +34,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/teachings/teachings.page').then( m => m.TeachingsPage)
       },
       {
+        path: 'donaciones',
+        loadComponent: () => import('./pages/donaciones/donaciones.page').then( m => m.DonacionesPage)
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full',

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonList, IonItem, IonLabel, IonBadge, ToastController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -8,7 +8,8 @@ import {
   bulbOutline,
   bookOutline,
   searchOutline,
-  bookmarkOutline
+  bookmarkOutline,
+  giftOutline
 } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 
@@ -27,6 +28,7 @@ export class ListPage implements OnInit, OnDestroy {
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
   private toastController = inject(ToastController);
+  private cdr = inject(ChangeDetectorRef);
 
   favoritesCount = 0;
   private subscription?: Subscription;
@@ -37,13 +39,16 @@ export class ListPage implements OnInit, OnDestroy {
       bulbOutline,
       bookOutline,
       searchOutline,
-      bookmarkOutline
+      bookmarkOutline,
+      giftOutline
     });
   }
 
   ngOnInit() {
     this.subscription = this.favoritesService.favorites$.subscribe(favorites => {
       this.favoritesCount = favorites.length;
+      // Detectar cambios manualmente para aplicaciones zoneless
+      this.cdr.detectChanges();
     });
   }
 
@@ -64,6 +69,10 @@ export class ListPage implements OnInit, OnDestroy {
       case 'teachings':
         // Navegar a la sección de enseñanzas
         this.router.navigate(['/teachings']);
+        break;
+      case 'donaciones':
+        // Navegar a la sección de donaciones
+        this.router.navigate(['/donaciones']);
         break;
     }
   }

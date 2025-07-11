@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { IonBackButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonRow, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { bookOutline, refreshOutline } from 'ionicons/icons';
@@ -19,6 +19,7 @@ import { DocumentosService } from '../../services/documentos.service';
 })
 export class TeachingsPage implements OnInit {
   private documentosService = inject(DocumentosService);
+  private cdr = inject(ChangeDetectorRef);
   
   ensenanzas: DocumentoModel[] = [];
   isLoading = true;
@@ -38,11 +39,15 @@ export class TeachingsPage implements OnInit {
       next: (data) => {
         this.ensenanzas = data;
         this.isLoading = false;
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.isLoading = false;
         // Mostrar mensaje de error al usuario
         this.ensenanzas = [];
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       }
     });
   }

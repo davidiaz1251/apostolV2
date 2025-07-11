@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonImg, IonButton, IonIcon, IonSpinner, IonChip, IonLabel } from '@ionic/angular/standalone';
@@ -22,6 +22,7 @@ import { shareOutline, chevronUp, chevronDown, playCircle } from 'ionicons/icons
 export class TeachingDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
   private documentosService = inject(DocumentosService);
+  private cdr = inject(ChangeDetectorRef);
   
   documento: DocumentoModel | null = null;
   isLoading = true;
@@ -46,16 +47,22 @@ export class TeachingDetailPage implements OnInit {
       next: (documento) => {
         this.documento = documento || null;
         this.isLoading = false;
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading documento:', error);
         this.isLoading = false;
+        // Detectar cambios manualmente para aplicaciones zoneless
+        this.cdr.detectChanges();
       }
     });
   }
 
   onPlayVideo() {
     this.showVideo = !this.showVideo;
+    // Detectar cambios manualmente para aplicaciones zoneless
+    this.cdr.detectChanges();
   }
 
   onShare() {
