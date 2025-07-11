@@ -23,17 +23,6 @@
         [alt]="documento.titulo"
         class="hero-image">
       </ion-img>
-      <div class="hero-overlay">
-        <div class="hero-actions">
-          <ion-button 
-            fill="clear" 
-            class="video-button"
-            (click)="onPlayVideo()"
-            *ngIf="documento.video">
-            <ion-icon name="play-circle-outline" size="large"></ion-icon>
-          </ion-button>
-        </div>
-      </div>
     </div>
 
     <!-- Content -->
@@ -55,6 +44,44 @@
       <div class="main-content">
         <div class="content-text">
           <p [innerHTML]="documento.texto | styleDocumento"></p>
+        </div>
+      </div>
+
+      <!-- Video section -->
+      <div *ngIf="documento.video" class="content-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <ion-icon name="play-circle" color="primary"></ion-icon>
+            Explicación en Video
+          </h2>
+          <ion-chip color="primary" outline="true">
+            <ion-label>1 video</ion-label>
+          </ion-chip>
+        </div>
+        
+        <div class="videos-container">
+          <div class="video-card">
+            <div class="video-header" (click)="onPlayVideo()">
+              <h3>
+                <ion-icon name="play-circle" color="primary"></ion-icon>
+                {{ showVideo ? 'Video Explicativo' : 'Ver Video Explicativo' }}
+              </h3>
+              <ion-button fill="clear" size="small">
+                <ion-icon [name]="showVideo ? 'chevron-up' : 'chevron-down'"></ion-icon>
+              </ion-button>
+            </div>
+            
+            <div class="video-wrapper" [class.expanded]="showVideo">
+              <iframe 
+                *ngIf="showVideo"
+                [src]="documento.video | video" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
         </div>
       </div>
     </div>

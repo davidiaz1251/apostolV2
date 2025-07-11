@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonImg, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonImg, IonButton, IonIcon, IonSpinner, IonChip, IonLabel } from '@ionic/angular/standalone';
 import { DocumentosService } from '../../services/documentos.service';
 import { DocumentoModel } from '../../models/models';
 import { StyleDocumentoPipe } from '../../pipes/style-documento.pipe';
+import { VideoPipe } from '../../pipes/video.pipe';
 import { addIcons } from 'ionicons';
-import { playCircleOutline, shareOutline } from 'ionicons/icons';
+import { shareOutline, chevronUp, chevronDown, playCircle } from 'ionicons/icons';
 
 @Component({
   selector: 'app-teaching-detail',
@@ -15,7 +16,7 @@ import { playCircleOutline, shareOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, 
-    IonImg, IonButton, IonIcon, IonSpinner, CommonModule, StyleDocumentoPipe
+    IonImg, IonButton, IonIcon, IonSpinner, IonChip, IonLabel, CommonModule, StyleDocumentoPipe, VideoPipe
   ]
 })
 export class TeachingDetailPage implements OnInit {
@@ -25,9 +26,10 @@ export class TeachingDetailPage implements OnInit {
   documento: DocumentoModel | null = null;
   isLoading = true;
   documentoId: string | null = null;
+  showVideo = false;
 
   constructor() {
-    addIcons({ playCircleOutline, shareOutline });
+    addIcons({ shareOutline, chevronUp, chevronDown, playCircle });
   }
 
   ngOnInit() {
@@ -53,9 +55,7 @@ export class TeachingDetailPage implements OnInit {
   }
 
   onPlayVideo() {
-    if (this.documento?.video) {
-      window.open(this.documento.video, '_blank');
-    }
+    this.showVideo = !this.showVideo;
   }
 
   onShare() {
