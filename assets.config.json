@@ -1,0 +1,20 @@
+{
+  "assets": {
+    "iconPath": "resources/icon.png",
+    "splashPath": "resources/splash.png",
+    "backgroundColor": "#ffffff",
+    "iconBackgroundColor": "#ffffff",
+    "iconBackgroundColorDark": "#000000",
+    "splashBackgroundColor": "#ffffff",
+    "splashBackgroundColorDark": "#000000",
+    "android": {
+      "adaptive": true,
+      "adaptiveBackground": "#ffffff",
+      "adaptiveBackgroundDark": "#000000"
+    },
+    "ios": {
+      "backgroundColor": "#ffffff",
+      "backgroundColorDark": "#000000"
+    }
+  }
+}

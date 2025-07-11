@@ -1,0 +1,26 @@
+{
+  "appId": "com.apostol.app",
+  "appName": "Apostol",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["google.com", "facebook.com", "twitter.com", "github.com", "microsoft.com", "apple.com"]
+    },
+    "FirebaseFirestore": {
+      "emulatorHost": null,
+      "emulatorPort": null
+    },
+    "FirebaseRemoteConfig": {
+      "minimumFetchIntervalInSeconds": 3600
+    },
+    "FirebaseStorage": {
+      "emulatorHost": null,
+      "emulatorPort": null
+    }
+  }
+}
