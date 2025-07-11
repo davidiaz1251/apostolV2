@@ -6,7 +6,7 @@ import { DocumentosService } from '../../services/documentos.service';
 import { DocumentoModel } from '../../models/models';
 import { StyleDocumentoPipe } from '../../pipes/style-documento.pipe';
 import { addIcons } from 'ionicons';
-import { playCircleOutline, shareOutline, bookmarkOutline } from 'ionicons/icons';
+import { playCircleOutline, shareOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-teaching-detail',
@@ -27,7 +27,7 @@ export class TeachingDetailPage implements OnInit {
   documentoId: string | null = null;
 
   constructor() {
-    addIcons({ playCircleOutline, shareOutline, bookmarkOutline });
+    addIcons({ playCircleOutline, shareOutline });
   }
 
   ngOnInit() {
@@ -66,10 +66,5 @@ export class TeachingDetailPage implements OnInit {
         url: window.location.href
       });
     }
-  }
-
-  onBookmark() {
-    // Implementar funcionalidad de favoritos
-    console.log('Agregando a favoritos:', this.documento?.titulo);
   }
 }
