@@ -30,6 +30,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/pruebas/pruebas.page').then( m => m.PruebasPage)
       },
       {
+        path: 'teachings',
+        loadComponent: () => import('./pages/teachings/teachings.page').then( m => m.TeachingsPage)
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full',
@@ -39,10 +43,6 @@ export const routes: Routes = [
   {
     path: 'tema/:id',
     loadComponent: () => import('./pages/tema-detail/tema-detail.page').then((m) => m.TemaDetailPage),
-  },
-  {
-    path: 'teachings',
-    loadComponent: () => import('./pages/teachings/teachings.page').then( m => m.TeachingsPage)
   },
   {
     path: 'teaching-detail/:id',
