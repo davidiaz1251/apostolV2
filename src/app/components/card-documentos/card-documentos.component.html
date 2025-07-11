@@ -1,0 +1,33 @@
+<ion-card (click)="onDocumentoClick()" class="documento-card">
+  <div class="card-image-container">
+    <ion-img 
+      [src]="documento.imagenLocal || documento.img" 
+      [alt]="documento.titulo"
+      class="card-image">
+    </ion-img>
+    <div class="card-overlay">
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        class="video-button"
+        (click)="onVideoClick($event)"
+        *ngIf="documento.video">
+        <ion-icon name="play-circle-outline" size="large"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+  
+  <ion-card-header>
+    <ion-card-title>{{ documento.titulo }}</ion-card-title>
+  </ion-card-header>
+  
+  <ion-card-content>
+    <p class="documento-intro">{{ documento.intro }}</p>
+    <div class="card-actions">
+      <ion-button fill="clear" size="small" class="read-button">
+        <ion-icon name="book-outline" slot="start"></ion-icon>
+        Leer
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

@@ -62,7 +62,7 @@ export class ListPage implements OnInit, OnDestroy {
         break;
       case 'teachings':
         // Navegar a la sección de enseñanzas
-        console.log('Navegando a Enseñanzas');
+        this.router.navigate(['/teachings']);
         break;
     }
   }

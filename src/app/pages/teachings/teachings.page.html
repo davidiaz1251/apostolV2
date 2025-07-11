@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Enseñanzas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Enseñanzas</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="teachings-container">
+   
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando enseñanzas...</p>
+    </div>
+
+    <!-- Grid de enseñanzas -->
+    <ion-grid *ngIf="!isLoading && ensenanzas.length > 0" [fixed]="true">
+      <ion-row>
+        <ion-col size-sm="12" size-xs="12" size-md="6" size-lg="4" size-xl="3" 
+                 *ngFor="let ensenanza of ensenanzas; trackBy: trackByEnsenanza">
+          <app-card-documentos [documento]="ensenanza"></app-card-documentos>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Mensaje si no hay enseñanzas -->
+    <div *ngIf="!isLoading && ensenanzas.length === 0" class="empty-state">
+      <ion-icon name="book-outline" size="large"></ion-icon>
+      <h3>No hay enseñanzas disponibles</h3>
+    </div>
+  </div>
+</ion-content>

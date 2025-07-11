@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ documento?.titulo || 'Enseñanza' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando enseñanza...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && documento" class="teaching-detail-container">
+    <!-- Hero Image -->
+    <div class="hero-image-container">
+      <ion-img 
+        [src]="documento.imagenLocal || documento.img" 
+        [alt]="documento.titulo"
+        class="hero-image">
+      </ion-img>
+      <div class="hero-overlay">
+        <div class="hero-actions">
+          <ion-button 
+            fill="clear" 
+            class="video-button"
+            (click)="onPlayVideo()"
+            *ngIf="documento.video">
+            <ion-icon name="play-circle-outline" size="large"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-section">
+      <div class="title-section">
+        <h1>{{ documento.titulo }}</h1>
+        <div class="action-buttons">
+          <ion-button fill="outline" size="small" (click)="onShare()">
+            <ion-icon name="share-outline" slot="start"></ion-icon>
+            Compartir
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="onBookmark()">
+            <ion-icon name="bookmark-outline" slot="start"></ion-icon>
+            Guardar
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <p class="intro-text">{{ documento.intro }}</p>
+      </div>
+
+      <div class="main-content">
+        <div class="content-text">
+          <p>{{ documento.texto }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!isLoading && !documento" class="error-state">
+    <ion-icon name="alert-circle-outline" size="large"></ion-icon>
+    <h3>Enseñanza no encontrada</h3>
+    <p>La enseñanza que buscas no está disponible.</p>
+  </div>
+</ion-content>

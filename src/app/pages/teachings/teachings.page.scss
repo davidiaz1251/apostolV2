@@ -1,0 +1,91 @@
+.teachings-container {
+  padding: 16px;
+  min-height: 100vh;
+  background: var(--ion-background-color);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  text-align: center;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+    --color: var(--ion-color-primary);
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  text-align: center;
+  padding: 32px;
+  
+  ion-icon {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    color: var(--ion-text-color);
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+}
+
+.debug-info {
+  background: var(--ion-color-light);
+  padding: 12px;
+  margin: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ion-color-medium);
+  font-size: 0.9rem;
+  
+  p {
+    margin: 4px 0;
+    color: var(--ion-text-color);
+  }
+  
+  strong {
+    color: var(--ion-color-primary);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .teachings-container {
+    padding: 8px;
+  }
+  
+  .empty-state {
+    padding: 16px;
+    
+    h3 {
+      font-size: 1.3rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}

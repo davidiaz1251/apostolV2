@@ -40,4 +40,12 @@ export const routes: Routes = [
     path: 'tema/:id',
     loadComponent: () => import('./pages/tema-detail/tema-detail.page').then((m) => m.TemaDetailPage),
   },
+  {
+    path: 'teachings',
+    loadComponent: () => import('./pages/teachings/teachings.page').then( m => m.TeachingsPage)
+  },
+  {
+    path: 'teaching-detail/:id',
+    loadComponent: () => import('./pages/teaching-detail/teaching-detail.page').then( m => m.TeachingDetailPage)
+  },
 ];
