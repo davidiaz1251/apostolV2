@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonList, IonItem, IonLabel, IonBadge } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonList, IonItem, IonLabel, IonBadge, ToastController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { 
-  heartOutline, 
-  bulbOutline, 
+import {
+  heartOutline,
+  bulbOutline,
   bookOutline,
   searchOutline,
   bookmarkOutline
@@ -26,14 +26,15 @@ import { FavoritesService } from '../../services/favorites.service';
 export class ListPage implements OnInit, OnDestroy {
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
-  
+  private toastController = inject(ToastController);
+
   favoritesCount = 0;
   private subscription?: Subscription;
 
   constructor() {
-    addIcons({ 
-      heartOutline, 
-      bulbOutline, 
+    addIcons({
+      heartOutline,
+      bulbOutline,
       bookOutline,
       searchOutline,
       bookmarkOutline
@@ -51,14 +52,14 @@ export class ListPage implements OnInit, OnDestroy {
   }
 
   navigateToSection(section: string) {
-    switch(section) {
+    switch (section) {
       case 'practices':
         // Navegar a la sección de prácticas
         this.router.navigate(['/practices']);
         break;
       case 'curiosities':
-        // Navegar a la sección de datos curiosos
-        console.log('Navegando a Datos Curiosos');
+        // Mostrar toast de próximamente
+        this.showComingSoonToast();
         break;
       case 'teachings':
         // Navegar a la sección de enseñanzas
@@ -70,9 +71,21 @@ export class ListPage implements OnInit, OnDestroy {
   openSearch() {
     console.log('Abriendo búsqueda');
     // Implementar funcionalidad de búsqueda
+    this.showComingSoonToast();
+
   }
 
   openFavorites() {
     this.router.navigate(['/favorites']);
+  }
+
+  private async showComingSoonToast() {
+    const toast = await this.toastController.create({
+      message: 'Próximamente disponible',
+      duration: 2000,
+      position: 'bottom',
+      color: 'primary'
+    });
+    toast.present();
   }
 }
