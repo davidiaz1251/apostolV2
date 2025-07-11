@@ -18,17 +18,10 @@ export class CardDocumentosComponent {
   private router = inject(Router);
 
   constructor() {
-    addIcons({ playCircleOutline, bookOutline, heartOutline });
+    addIcons({ bookOutline, heartOutline });
   }
 
   onDocumentoClick() {
     this.router.navigate(['/teaching-detail', this.documento.id]);
-  }
-
-  onVideoClick(event: Event) {
-    event.stopPropagation();
-    if (this.documento.video) {
-      window.open(this.documento.video, '_blank');
-    }
   }
 }

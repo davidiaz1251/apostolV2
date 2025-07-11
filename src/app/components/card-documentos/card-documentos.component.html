@@ -5,16 +5,6 @@
       [alt]="documento.titulo"
       class="card-image">
     </ion-img>
-    <div class="card-overlay">
-      <ion-button 
-        fill="clear" 
-        size="small" 
-        class="video-button"
-        (click)="onVideoClick($event)"
-        *ngIf="documento.video">
-        <ion-icon name="play-circle-outline" size="large"></ion-icon>
-      </ion-button>
-    </div>
   </div>
   
   <ion-card-header>
