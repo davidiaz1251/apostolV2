@@ -109,16 +109,16 @@
           <ion-list class="answers-list">
             <ion-radio-group [(ngModel)]="selectedAnswer" [disabled]="isAnswered">
               <ion-item class="answer-item" [class.disabled]="isAnswered">
-                <ion-label>A: {{ getCurrentQuestion()?.a }}</ion-label>
-                <ion-radio value="A"></ion-radio>
+                <ion-label>A: {{ getCurrentQuestion()?.A }}</ion-label>
+                <ion-radio slot="end" value="A"></ion-radio>
               </ion-item>
               <ion-item class="answer-item" [class.disabled]="isAnswered">
-                <ion-label>B: {{ getCurrentQuestion()?.b }}</ion-label>
-                <ion-radio value="B"></ion-radio>
+                <ion-label>B: {{ getCurrentQuestion()?.B }}</ion-label>
+                <ion-radio slot="end" value="B"></ion-radio>
               </ion-item>
               <ion-item class="answer-item" [class.disabled]="isAnswered">
-                <ion-label>C: {{ getCurrentQuestion()?.c }}</ion-label>
-                <ion-radio value="C"></ion-radio>
+                <ion-label>C: {{ getCurrentQuestion()?.C }}</ion-label>
+                <ion-radio slot="end" value="C"></ion-radio>
               </ion-item>
             </ion-radio-group>
           </ion-list>

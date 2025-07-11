@@ -23,9 +23,9 @@ export interface Practica {
   id: string;
   pregunta: string;
   respuesta: string;
-  a: string;
-  b: string;
-  c: string;
+  A: string;
+  B: string;
+  C: string;
   tema: string;
 }
 
