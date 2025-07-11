@@ -1,11 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonGrid, IonRow, IonCol, IonSpinner, IonIcon, IonButton } from '@ionic/angular/standalone';
-import { DocumentosService } from '../../services/documentos.service';
-import { DocumentoModel } from '../../models/models';
-import { CardDocumentosComponent } from '../../components/card-documentos/card-documentos.component';
+import { Component, OnInit, inject } from '@angular/core';
+import { IonBackButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonRow, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { bookOutline, refreshOutline } from 'ionicons/icons';
+import { CardDocumentosComponent } from '../../components/card-documentos/card-documentos.component';
+import { DocumentoModel } from '../../models/models';
+import { DocumentosService } from '../../services/documentos.service';
 
 @Component({
   selector: 'app-teachings',
@@ -14,7 +14,7 @@ import { bookOutline, refreshOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, 
-    IonGrid, IonRow, IonCol, IonSpinner, IonIcon, IonButton, CommonModule, CardDocumentosComponent
+    IonGrid, IonRow, IonCol, IonSpinner, IonIcon, CommonModule, CardDocumentosComponent
   ]
 })
 export class TeachingsPage implements OnInit {
