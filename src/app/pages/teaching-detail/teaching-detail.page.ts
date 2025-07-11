@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonImg, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { DocumentosService } from '../../services/documentos.service';
 import { DocumentoModel } from '../../models/models';
+import { StyleDocumentoPipe } from '../../pipes/style-documento.pipe';
 import { addIcons } from 'ionicons';
 import { playCircleOutline, shareOutline, bookmarkOutline } from 'ionicons/icons';
 
@@ -14,7 +15,7 @@ import { playCircleOutline, shareOutline, bookmarkOutline } from 'ionicons/icons
   standalone: true,
   imports: [
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, 
-    IonImg, IonButton, IonIcon, IonSpinner, CommonModule
+    IonImg, IonButton, IonIcon, IonSpinner, CommonModule, StyleDocumentoPipe
   ]
 })
 export class TeachingDetailPage implements OnInit {

@@ -58,7 +58,7 @@
 
       <div class="main-content">
         <div class="content-text">
-          <p>{{ documento.texto }}</p>
+          <p [innerHTML]="documento.texto | styleDocumento"></p>
         </div>
       </div>
     </div>
