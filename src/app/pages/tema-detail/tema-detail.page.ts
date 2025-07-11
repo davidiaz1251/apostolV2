@@ -269,7 +269,7 @@ export class TemaDetailPage implements OnInit, OnDestroy {
     
     this.currentSpeechUtterance.text = textContent;
     this.currentSpeechUtterance.lang = 'es-ES';
-    this.currentSpeechUtterance.rate = 0.9;
+    this.currentSpeechUtterance.rate = 0.7;
     this.currentSpeechUtterance.pitch = 0.7;
     this.currentSpeechUtterance.volume = 1;
 
