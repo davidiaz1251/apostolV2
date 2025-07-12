@@ -16,7 +16,7 @@ Tu proyecto tiene los siguientes plugins de Firebase configurados:
   "plugins": {
     "FirebaseAuthentication": {
       "skipNativeAuth": false,
-      "providers": ["google.com", "facebook.com", "twitter.com", "github.com", "microsoft.com", "apple.com"]
+      "providers": ["google.com"]
     },
     "FirebaseFirestore": {
       "emulatorHost": null,
