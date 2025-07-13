@@ -98,6 +98,14 @@ export class FirebaseService {
       // Verificar que los plugins estén disponibles
       if (typeof FirebaseAuthentication !== 'undefined') {
         console.log('FirebaseAuthentication plugin available');
+        
+        // Verificar si Firebase está inicializado
+        try {
+          await FirebaseAuthentication.getCurrentUser();
+          console.log('Firebase Authentication is properly initialized');
+        } catch (error) {
+          console.log('Firebase Authentication initialization check completed');
+        }
       }
       
       if (typeof FirebaseFirestore !== 'undefined') {
@@ -490,19 +498,38 @@ export class FirebaseService {
 
   async loginWithGoogle() {
     try {
+      console.log('🔐 Iniciando login con Google...');
+      
       if (Capacitor.isNativePlatform()) {
+        console.log('📱 Plataforma nativa detectada');
+        
+        // Verificar que Firebase esté inicializado
+        try {
+          await FirebaseAuthentication.getCurrentUser();
+          console.log('✅ Firebase Authentication está inicializado');
+        } catch (initError) {
+          console.error('❌ Firebase no está inicializado correctamente:', initError);
+          throw new Error('Firebase no está inicializado. Verifica tu configuración.');
+        }
+        
+        // Intentar login con Google
         const result = await FirebaseAuthentication.signInWithGoogle();
+        console.log('✅ Login exitoso:', result);
+        
         this.currentUser$.next(result.user);
         return result;
       } else {
+        console.log('🌐 Plataforma web detectada');
         // Web platform
         const provider = new GoogleAuthProvider();
         provider.addScope('email');
         provider.addScope('profile');
         const result = await signInWithPopup(this.auth!, provider);
+        console.log('✅ Login web exitoso:', result);
         return result;
       }
     } catch (error) {
+      console.error('❌ Error en login con Google:', error);
       throw error;
     }
   }
