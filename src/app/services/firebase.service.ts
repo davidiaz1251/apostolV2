@@ -63,8 +63,15 @@ export class FirebaseService {
   }
 
   // Inicializar Firebase
-  private initializeFirebase() {
-    if (!Capacitor.isNativePlatform()) {
+  private async initializeFirebase() {
+    if (Capacitor.isNativePlatform()) {
+      // Initialize Firebase for native platforms (Android/iOS)
+      try {
+        await this.initializeNativeFirebase();
+      } catch (error) {
+        console.error('Error initializing native Firebase:', error);
+      }
+    } else {
       // Initialize Firebase for web platform
       if (getApps().length === 0) {
         this.firebaseApp = initializeApp(environment.firebase);
@@ -76,6 +83,38 @@ export class FirebaseService {
       this.firestore = getFirestore(this.firebaseApp);
       this.storage = getStorage(this.firebaseApp);
       this.remoteConfig = getRemoteConfig(this.firebaseApp);
+    }
+  }
+
+  // Inicializar Firebase en plataformas nativas
+  private async initializeNativeFirebase() {
+    try {
+      // En plataformas nativas, los plugins de Capacitor Firebase
+      // se inicializan automáticamente cuando se registran
+      // Solo necesitamos verificar que estén disponibles
+      
+      console.log('Firebase plugins initialized for native platform');
+      
+      // Verificar que los plugins estén disponibles
+      if (typeof FirebaseAuthentication !== 'undefined') {
+        console.log('FirebaseAuthentication plugin available');
+      }
+      
+      if (typeof FirebaseFirestore !== 'undefined') {
+        console.log('FirebaseFirestore plugin available');
+      }
+      
+      if (typeof FirebaseStorage !== 'undefined') {
+        console.log('FirebaseStorage plugin available');
+      }
+      
+      if (typeof FirebaseRemoteConfig !== 'undefined') {
+        console.log('FirebaseRemoteConfig plugin available');
+      }
+      
+    } catch (error) {
+      console.error('Error initializing Firebase for native platform:', error);
+      throw error;
     }
   }
 
