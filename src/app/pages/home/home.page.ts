@@ -26,6 +26,8 @@ export class HomePage implements OnInit {
   secciones: Seccion[] = [];
   temasAgrupados: { [seccion: string]: Tema[] } = {};
   isLoading = true;
+  // Evita navegaciones duplicadas al tocar en mobile (touchend + click)
+  isNavigating = false;
 
   constructor() {
     addIcons({ book, chevronForward, play, image });
@@ -85,8 +87,21 @@ export class HomePage implements OnInit {
     return this.secciones.find(s => s.nombre === seccionNombre) || null;
   }
 
-  onTemaClick(tema: Tema) {
+  async onTemaClick(tema: Tema) {
+    // Protege contra dobles disparos de eventos en dispositivos táctiles
+    if (this.isNavigating) {
+      console.log('Navegación en progreso, ignorando click adicional');
+      return;
+    }
+    this.isNavigating = true;
     console.log('Tema seleccionado:', tema.titulo);
-    this.router.navigate(['/tema', tema.id]);
+    try {
+      await this.router.navigate(['/tema', tema.id]);
+    } catch (err) {
+      console.error('Error navegando al tema:', err);
+    } finally {
+      // Liberar el lock después de un pequeño retardo para permitir interacciones posteriores
+      setTimeout(() => { this.isNavigating = false; }, 300);
+    }
   }
 }
