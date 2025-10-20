@@ -61,13 +61,17 @@
                 "spaceBetween": 28
               }
             }'
+            [preventClicks]="false"
+            [preventClicksPropagation]="false"
             class="temas-swiper"
           >
             <swiper-slide
               *ngFor="let tema of temasAgrupados[seccionNombre]; let i = index"
               class="tema-slide"
+              (click)="onTemaClick(tema)"
+              (touchend)="onTemaClick(tema)"
             >
-              <div class="tema-card-modern" (click)="onTemaClick(tema)">
+              <div class="tema-card-modern">
                 <!-- Imagen del tema -->
                 <div class="tema-image-container">
                   <img 
