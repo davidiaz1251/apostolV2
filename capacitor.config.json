@@ -17,15 +17,11 @@
       "providers": ["google.com"]
     },
     "FirebaseFirestore": {
-      "emulatorHost": null,
-      "emulatorPort": null
     },
     "FirebaseRemoteConfig": {
       "minimumFetchIntervalInSeconds": 3600
     },
     "FirebaseStorage": {
-      "emulatorHost": null,
-      "emulatorPort": null
     }
   }
 }

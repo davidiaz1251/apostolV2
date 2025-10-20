@@ -17,13 +17,8 @@ export class AppComponent implements OnInit {
   constructor() {}
 
   async ngOnInit() {
-    // Esperar a que la plataforma esté lista
     await this.platform.ready();
     
-    // Inicializar el tema y el listener para cambios del sistema
     this.themeService.initSystemThemeListener();
-    
-    // Inicializar Firebase service (esto ya se hace en el constructor, pero lo llamamos aquí para asegurar)
-    console.log('App initialized, Firebase service loaded');
   }
 }

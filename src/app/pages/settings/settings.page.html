@@ -23,16 +23,19 @@
       <ion-card-content>
         <div class="profile-info">
           <div class="avatar">
+            <!-- Debug: Mostrar información de la imagen -->
+            <!-- photoURL: {{ profile.photoURL }} -->
             <img 
-              *ngIf="profile.photoURL" 
+              *ngIf="profile.photoURL && profile.photoURL.length > 0" 
               [src]="profile.photoURL" 
               [alt]="profile.displayName || 'Usuario'" 
               class="avatar-image"
               (load)="onImageLoad()"
               (error)="onImageError($event)"
+              loading="lazy"
             />
             <ion-icon 
-              *ngIf="!profile.photoURL" 
+              *ngIf="!profile.photoURL || profile.photoURL.length === 0" 
               name="person" 
               size="large"
               class="avatar-icon"
@@ -42,6 +45,11 @@
             <h3>{{ profile.displayName || 'Usuario' }}</h3>
             <p>{{ profile.email }}</p>
             <p class="bio" *ngIf="profile.bio">{{ profile.bio }}</p>
+            <!-- Debug info -->
+            <p class="debug-info" style="font-size: 0.7rem; color: var(--ion-color-medium); margin-top: 4px;">
+              Auth: {{ isAuthenticated ? 'Sí' : 'No' }} | 
+              Photo: {{ profile.photoURL ? 'Sí' : 'No' }}
+            </p>
           </div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">

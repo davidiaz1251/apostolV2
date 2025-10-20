@@ -6,14 +6,12 @@ import { Tema, Seccion, Practica, SyncStatus } from '../interfaces/tema.interfac
 import { PracticaModel, SeccionModel } from '../models/models';
 import { environment } from '../../environments/environment';
 
-// Capacitor Firebase imports
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { FirebaseFirestore } from '@capacitor-firebase/firestore';
 import { FirebaseStorage } from '@capacitor-firebase/storage';
 import { FirebaseRemoteConfig } from '@capacitor-firebase/remote-config';
 import { Capacitor } from '@capacitor/core';
 
-// Web Firebase imports (for web platform)
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, UserCredential, getRedirectResult } from 'firebase/auth';
 import { getFirestore, Firestore, collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, orderBy, where } from 'firebase/firestore';
@@ -27,18 +25,15 @@ export class FirebaseService {
   private offlineService = inject(OfflineService);
   private platform = inject(Platform);
 
-  // Web Firebase instances
   private firebaseApp: FirebaseApp | null = null;
   private auth: Auth | null = null;
   private firestore: Firestore | null = null;
   private storage: any = null;
   private remoteConfig: RemoteConfig | null = null;
 
-  // Observable del estado de autenticación
   private currentUser$ = new BehaviorSubject<any>(null);
   public user$ = this.currentUser$.asObservable();
 
-  // BehaviorSubjects para datos offline
   private temasSubject = new BehaviorSubject<Tema[]>([]);
   private seccionesSubject = new BehaviorSubject<Seccion[]>([]);
   private practicasSubject = new BehaviorSubject<Practica[]>([]);
@@ -62,17 +57,14 @@ export class FirebaseService {
     this.initializeAuth();
   }
 
-  // Inicializar Firebase
   private async initializeFirebase() {
     if (Capacitor.isNativePlatform()) {
-      // Initialize Firebase for native platforms (Android/iOS)
       try {
         await this.initializeNativeFirebase();
       } catch (error) {
         console.error('Error initializing native Firebase:', error);
       }
     } else {
-      // Initialize Firebase for web platform
       if (getApps().length === 0) {
         this.firebaseApp = initializeApp(environment.firebase);
       } else {
@@ -86,38 +78,18 @@ export class FirebaseService {
     }
   }
 
-  // Inicializar Firebase en plataformas nativas
   private async initializeNativeFirebase() {
     try {
-      // En plataformas nativas, los plugins de Capacitor Firebase
-      // se inicializan automáticamente cuando se registran
-      // Solo necesitamos verificar que estén disponibles
-      
-      console.log('Firebase plugins initialized for native platform');
-      
-      // Verificar que los plugins estén disponibles
       if (typeof FirebaseAuthentication !== 'undefined') {
-        console.log('FirebaseAuthentication plugin available');
-        
-        // Verificar si Firebase está inicializado
         try {
           await FirebaseAuthentication.getCurrentUser();
-          console.log('Firebase Authentication is properly initialized');
         } catch (error) {
-          console.log('Firebase Authentication initialization check completed');
         }
       }
       
-      if (typeof FirebaseFirestore !== 'undefined') {
-        console.log('FirebaseFirestore plugin available');
-      }
-      
-      if (typeof FirebaseStorage !== 'undefined') {
-        console.log('FirebaseStorage plugin available');
-      }
-      
-      if (typeof FirebaseRemoteConfig !== 'undefined') {
-        console.log('FirebaseRemoteConfig plugin available');
+      if (typeof FirebaseFirestore === 'undefined') { /* No-op */ }
+      if (typeof FirebaseStorage === 'undefined') { /* No-op */ }
+      if (typeof FirebaseRemoteConfig === 'undefined') {
       }
       
     } catch (error) {
@@ -126,17 +98,14 @@ export class FirebaseService {
     }
   }
 
-  // Inicializar autenticación
   private async initializeAuth() {
     if (Capacitor.isNativePlatform()) {
       try {
         const result = await FirebaseAuthentication.getCurrentUser();
         this.currentUser$.next(result.user);
       } catch (error) {
-        console.log('No user is currently signed in');
       }
     } else {
-      // Web platform
       if (this.auth) {
         onAuthStateChanged(this.auth, (user) => {
           this.currentUser$.next(user);
@@ -145,144 +114,91 @@ export class FirebaseService {
     }
   }
 
-  // Inicializar datos offline
   private async initializeOfflineData() {
-    console.log('🚀 Inicializando FirebaseService...');
-    
-    // Configurar Remote Config
     await this.setupRemoteConfig();
     
-    // Cargar datos locales primero
-    console.log('📂 Cargando datos locales...');
     await this.loadLocalData();
     
-    // Verificar versión y sincronizar si es necesario
-    console.log('🔍 Verificando versión y sincronización...');
     await this.checkVersionAndSync();
     
-    // Escuchar cambios de conexión para futuras sincronizaciones
     this.offlineService.isOnline$.subscribe(async (isOnline) => {
-      console.log('🔄 Cambio de conexión detectado:', isOnline ? 'ONLINE' : 'OFFLINE');
       if (isOnline) {
         await this.checkVersionAndSync();
       }
     });
   }
 
-  // Configurar Remote Config
   private async setupRemoteConfig() {
     try {
-      console.log('⚙️ Configurando Remote Config...');
-      
       if (Capacitor.isNativePlatform()) {
         await FirebaseRemoteConfig.setSettings({
           minimumFetchIntervalInSeconds: 10, // 10 segundos en desarrollo
           fetchTimeoutInSeconds: 10
         });
       } else {
-        // Web platform
         if (this.remoteConfig) {
           this.remoteConfig.settings.minimumFetchIntervalMillis = 10000;
           this.remoteConfig.settings.fetchTimeoutMillis = 10000;
         }
       }
-      
-      console.log('✅ Remote Config configurado');
     } catch (error) {
       console.error('❌ Error configurando Remote Config:', error);
     }
   }
 
-  // Verificar versión y sincronizar si es necesario
   private async checkVersionAndSync() {
-    console.log('🔄 Iniciando checkVersionAndSync...');
-    console.log('🌐 Estado de conexión:', this.offlineService.isConnected());
-    
     if (!this.offlineService.isConnected()) {
-      console.log('❌ Sin conexión, usando datos locales');
       await this.loadLocalData();
       return;
     }
 
     try {
-      console.log('📡 Obteniendo configuración remota...');
-      
       if (Capacitor.isNativePlatform()) {
-        // Obtener versión remota
         await FirebaseRemoteConfig.fetchAndActivate();
         const result = await FirebaseRemoteConfig.getString({ key: 'temas_version' });
         const remoteVersion = result.value || '1';
         
-        // Obtener versión local
         const localVersion = await this.offlineService.getData(this.STORAGE_KEYS.TEMAS_VERSION) || '0';
-        
-        console.log('🆚 Versión remota:', remoteVersion, 'Versión local:', localVersion);
-        
         if (remoteVersion !== localVersion) {
-          console.log('🔄 Nueva versión disponible, sincronizando...');
           await this.syncDataFromFirebase();
           await this.offlineService.setData(this.STORAGE_KEYS.TEMAS_VERSION, remoteVersion);
-          console.log('✅ Sincronización completada y versión actualizada');
-        } else {
-          console.log('✅ Versión actual, usando datos locales');
         }
       } else {
-        // Web platform
         if (this.remoteConfig) {
           await fetchAndActivate(this.remoteConfig);
           const remoteVersion = getValue(this.remoteConfig, 'temas_version').asString();
           
           const localVersion = await this.offlineService.getData(this.STORAGE_KEYS.TEMAS_VERSION) || '0';
-          
-          console.log('🆚 Versión remota:', remoteVersion, 'Versión local:', localVersion);
-          
           if (remoteVersion !== localVersion) {
-            console.log('🔄 Nueva versión disponible, sincronizando...');
             await this.syncDataFromFirebase();
             await this.offlineService.setData(this.STORAGE_KEYS.TEMAS_VERSION, remoteVersion);
-            console.log('✅ Sincronización completada y versión actualizada');
-          } else {
-            console.log('✅ Versión actual, usando datos locales');
           }
         } else {
-          // Fallback: sincronizar directamente
           await this.syncDataFromFirebase();
         }
       }
     } catch (error) {
       console.error('❌ Error verificando versión:', error);
-      // Si hay error en Remote Config, intentar sincronizar directamente
-      console.log('🔄 Intentando sincronización directa...');
       await this.syncDataFromFirebase();
     }
   }
 
-  // Cargar datos desde almacenamiento local
   private async loadLocalData() {
     try {
-      console.log('📂 Cargando datos desde almacenamiento local...');
       const [temas, secciones, practicas] = await Promise.all([
         this.offlineService.getData(this.STORAGE_KEYS.TEMAS),
         this.offlineService.getData(this.STORAGE_KEYS.SECCIONES),
         this.offlineService.getData(this.STORAGE_KEYS.PRACTICAS)
       ]);
 
-      console.log('📊 Datos locales encontrados:');
-      console.log('  - Temas:', temas ? temas.length : 0);
-      console.log('  - Secciones:', secciones ? secciones.length : 0);
-      console.log('  - Prácticas:', practicas ? practicas.length : 0);
-
       if (temas) {
         this.temasSubject.next(temas);
-        console.log('✅ Temas cargados desde local');
       }
       if (secciones) {
         this.seccionesSubject.next(secciones);
-        console.log('✅ Secciones cargadas desde local');
       }
       if (practicas) {
         this.practicasSubject.next(practicas);
-        console.log('✅ Prácticas cargadas desde local');
       }
 
       if (!temas && !secciones && !practicas) {
@@ -294,25 +210,17 @@ export class FirebaseService {
     }
   }
 
-  // Sincronizar datos desde Firebase
   async syncDataFromFirebase(): Promise<void> {
     if (!this.offlineService.isConnected()) {
-      console.log('❌ Sin conexión, no se puede sincronizar');
       return;
     }
 
     try {
-      console.log('🔄 Iniciando sincronización desde Firebase...');
-      
-      // Obtener datos de Firebase usando las consultas nativas
-      console.log('📡 Obteniendo datos de las colecciones...');
-      
       let temasResult: any;
       let seccionesResult: any;
       let practicasResult: any;
 
       if (Capacitor.isNativePlatform()) {
-        // Native platform
         [temasResult, seccionesResult, practicasResult] = await Promise.all([
           FirebaseFirestore.getCollection({
             reference: 'Temas'
@@ -325,7 +233,6 @@ export class FirebaseService {
           })
         ]);
       } else {
-        // Web platform
         [temasResult, seccionesResult, practicasResult] = await Promise.all([
           getDocs(query(collection(this.firestore!, 'Temas'), orderBy('orden'))),
           getDocs(collection(this.firestore!, 'secciones')),
@@ -347,12 +254,6 @@ export class FirebaseService {
         practicasCount = practicasResult.docs.length;
       }
 
-      console.log('📊 Documentos obtenidos:');
-      console.log('  - Temas:', temasCount);
-      console.log('  - Secciones:', seccionesCount);
-      console.log('  - Prácticas:', practicasCount);
-
-      // Procesar temas
       const temas: Tema[] = [];
       
       if (Capacitor.isNativePlatform()) {
@@ -360,14 +261,12 @@ export class FirebaseService {
           const data = snapshot.data as Tema;
           const tema = { ...data, id: snapshot.id };
           
-          // Descargar imagen si existe y no está en local
           if (tema.img && !tema.imagenLocal) {
             try {
               const imageName = `tema_${tema.id}_${Date.now()}.jpg`;
               const localPath = await this.offlineService.downloadAndSaveImage(tema.img, imageName);
               tema.imagenLocal = localPath;
             } catch (error) {
-              console.warn('⚠️ Error descargando imagen del tema:', tema.id, error);
             }
           }
           
@@ -378,14 +277,12 @@ export class FirebaseService {
           const data = docSnapshot.data() as Tema;
           const tema = { ...data, id: docSnapshot.id };
           
-          // Descargar imagen si existe y no está en local
           if (tema.img && !tema.imagenLocal) {
             try {
               const imageName = `tema_${tema.id}_${Date.now()}.jpg`;
               const localPath = await this.offlineService.downloadAndSaveImage(tema.img, imageName);
               tema.imagenLocal = localPath;
             } catch (error) {
-              console.warn('⚠️ Error descargando imagen del tema:', tema.id, error);
             }
           }
           
@@ -393,10 +290,8 @@ export class FirebaseService {
         }
       }
       
-      // Ordenar temas por orden si existe la propiedad
       temas.sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
-      // Procesar secciones
       const secciones: Seccion[] = [];
       
       if (Capacitor.isNativePlatform()) {
@@ -413,7 +308,6 @@ export class FirebaseService {
         }
       }
 
-      // Procesar prácticas
       const practicas: Practica[] = [];
       
       if (Capacitor.isNativePlatform()) {
@@ -428,8 +322,6 @@ export class FirebaseService {
         });
       }
 
-      console.log('💾 Guardando datos en almacenamiento local...');
-      // Guardar en almacenamiento local
       await Promise.all([
         this.offlineService.setData(this.STORAGE_KEYS.TEMAS, temas),
         this.offlineService.setData(this.STORAGE_KEYS.SECCIONES, secciones),
@@ -441,23 +333,14 @@ export class FirebaseService {
         })
       ]);
 
-      // Actualizar observables
-      console.log('🔄 Actualizando observables...');
       this.temasSubject.next(temas);
       this.seccionesSubject.next(secciones);
       this.practicasSubject.next(practicas);
-
-      console.log('✅ Sincronización completada exitosamente');
-      console.log('📊 Datos sincronizados:');
-      console.log('  - Temas:', temas.length);
-      console.log('  - Secciones:', secciones.length);
-      console.log('  - Prácticas:', practicas.length);
     } catch (error) {
       console.error('❌ Error sincronizando datos:', error);
     }
   }
 
-  // Métodos de Autenticación
   async login(email: string, password: string) {
     try {
       if (Capacitor.isNativePlatform()) {
@@ -468,7 +351,6 @@ export class FirebaseService {
         this.currentUser$.next(result.user);
         return result;
       } else {
-        // Web platform
         const result = await signInWithEmailAndPassword(this.auth!, email, password);
         return result;
       }
@@ -487,7 +369,6 @@ export class FirebaseService {
         this.currentUser$.next(result.user);
         return result;
       } else {
-        // Web platform
         const result = await createUserWithEmailAndPassword(this.auth!, email, password);
         return result;
       }
@@ -498,34 +379,29 @@ export class FirebaseService {
 
   async loginWithGoogle() {
     try {
-      console.log('🔐 Iniciando login con Google...');
-      
       if (Capacitor.isNativePlatform()) {
-        console.log('📱 Plataforma nativa detectada');
-        
-        // Verificar que Firebase esté inicializado
         try {
           await FirebaseAuthentication.getCurrentUser();
-          console.log('✅ Firebase Authentication está inicializado');
         } catch (initError) {
           console.error('❌ Firebase no está inicializado correctamente:', initError);
           throw new Error('Firebase no está inicializado. Verifica tu configuración.');
         }
         
-        // Intentar login con Google
         const result = await FirebaseAuthentication.signInWithGoogle();
-        console.log('✅ Login exitoso:', result);
         
-        this.currentUser$.next(result.user);
+        const normalizedUser = this.normalizeUserData(result.user);
+        
+        this.currentUser$.next(normalizedUser);
         return result;
       } else {
-        console.log('🌐 Plataforma web detectada');
-        // Web platform
         const provider = new GoogleAuthProvider();
         provider.addScope('email');
         provider.addScope('profile');
         const result = await signInWithPopup(this.auth!, provider);
-        console.log('✅ Login web exitoso:', result);
+        
+        const normalizedUser = this.normalizeUserData(result.user);
+        
+        this.currentUser$.next(normalizedUser);
         return result;
       }
     } catch (error) {
@@ -540,7 +416,6 @@ export class FirebaseService {
         await FirebaseAuthentication.signOut();
         this.currentUser$.next(null);
       } else {
-        // Web platform
         await signOut(this.auth!);
       }
     } catch (error) {
@@ -548,24 +423,35 @@ export class FirebaseService {
     }
   }
 
-  // Método público para obtener el usuario actual
   getCurrentUser(): any {
     return this.currentUser$.value;
   }
 
-  // Verificar si estamos en un dispositivo móvil
+  private normalizeUserData(user: any): any {
+    if (!user) return null;
+    
+    const photoURL = user.photoURL || user.photoUrl || '';
+    
+    const normalizedUser = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: photoURL,
+      providerId: user.providerId || user.providerData?.[0]?.providerId || 'unknown'
+    };
+    
+    return normalizedUser;
+  }
+
   private isMobileDevice(): boolean {
     return this.platform.is('mobile') || this.platform.is('tablet');
   }
 
-  // Método para verificar el resultado del redirect (compatibility)
   async checkRedirectResult(): Promise<UserCredential | null> {
     try {
       if (Capacitor.isNativePlatform()) {
-        // En el plugin nativo, esto no es necesario
         return null;
       } else {
-        // En web, usar Firebase Web SDK
         if (!this.auth) {
           throw new Error('Auth not initialized');
         }
@@ -577,7 +463,6 @@ export class FirebaseService {
     }
   }
 
-  // Métodos de Firestore
   async addDocument(collectionName: string, data: any) {
     try {
       if (Capacitor.isNativePlatform()) {
@@ -587,7 +472,6 @@ export class FirebaseService {
         });
         return result;
       } else {
-        // Web platform
         const docRef = await addDoc(collection(this.firestore!, collectionName), data);
         return docRef;
       }
@@ -607,7 +491,6 @@ export class FirebaseService {
           ...snapshot.data
         }));
       } else {
-        // Web platform
         const querySnapshot = await getDocs(collection(this.firestore!, collectionName));
         const documents: any[] = [];
         querySnapshot.forEach((doc) => {
@@ -628,7 +511,6 @@ export class FirebaseService {
           data
         });
       } else {
-        // Web platform
         const docRef = doc(this.firestore!, collectionName, docId);
         await updateDoc(docRef, data);
       }
@@ -644,7 +526,6 @@ export class FirebaseService {
           reference: `${collectionName}/${docId}`
         });
       } else {
-        // Web platform
         const docRef = doc(this.firestore!, collectionName, docId);
         await deleteDoc(docRef);
       }
@@ -659,7 +540,6 @@ export class FirebaseService {
         const result = await FirebaseFirestore.getCollection({
           reference: collectionName
         });
-        // Filter manually since the query API might not be available
         return result.snapshots
           .filter(snapshot => {
             const data = snapshot.data as any;
@@ -685,7 +565,6 @@ export class FirebaseService {
             ...snapshot.data
           }));
       } else {
-        // Web platform
         const q = query(collection(this.firestore!, collectionName), where(field, operator, value));
         const querySnapshot = await getDocs(q);
         const documents: any[] = [];
@@ -699,7 +578,6 @@ export class FirebaseService {
     }
   }
 
-  // Métodos de Storage
   async uploadFile(file: File, path: string) {
     try {
       if (Capacitor.isNativePlatform()) {
@@ -712,7 +590,6 @@ export class FirebaseService {
         });
         return result;
       } else {
-        // Web platform
         const storageRef = ref(this.storage, path);
         const snapshot = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
@@ -731,7 +608,6 @@ export class FirebaseService {
         });
         return result.downloadUrl;
       } else {
-        // Web platform
         const storageRef = ref(this.storage, path);
         const downloadURL = await getDownloadURL(storageRef);
         return downloadURL;
@@ -741,8 +617,6 @@ export class FirebaseService {
     }
   }
 
-  // ===== MÉTODOS DE TEMAS (compatibles con el servicio anterior) =====
-  
   getTemasAll(): Observable<Tema[]> {
     return this.temas$;
   }
@@ -766,8 +640,6 @@ export class FirebaseService {
     return tema ? [tema] : [];
   }
 
-  // ===== MÉTODOS DE SECCIONES =====
-  
   getSecciones(): Observable<Seccion[]> {
     return this.secciones$;
   }
@@ -781,10 +653,8 @@ export class FirebaseService {
               reference: 'secciones',
               data: { ...item }
             });
-            // The result contains the document reference, extract the ID
             item.id = result.reference.id;
           } else {
-            // Web platform
             const docRef = await addDoc(collection(this.firestore!, 'secciones'), item);
             item.id = docRef.id;
           }
@@ -795,16 +665,12 @@ export class FirebaseService {
               data: { ...item }
             });
           } else {
-            // Web platform
             await updateDoc(doc(this.firestore!, 'secciones', item.id), { ...item });
           }
         }
         
-        // Actualizar datos locales
         await this.syncDataFromFirebase();
       } else {
-        // TODO: Guardar cambios pendientes para sincronizar después
-        console.log('Sin conexión, cambios guardados para sincronizar después');
       }
       return true;
     } catch (error) {
@@ -821,13 +687,10 @@ export class FirebaseService {
             reference: `secciones/${id}`
           });
         } else {
-          // Web platform
           await deleteDoc(doc(this.firestore!, 'secciones', id));
         }
         await this.syncDataFromFirebase();
       } else {
-        // TODO: Marcar para eliminar cuando haya conexión
-        console.log('Sin conexión, eliminación pendiente');
       }
       return true;
     } catch (error) {
@@ -836,8 +699,6 @@ export class FirebaseService {
     }
   }
 
-  // ===== MÉTODOS DE PRÁCTICAS =====
-  
   getPracticasAll(): Observable<Practica[]> {
     return this.practicas$;
   }
@@ -861,13 +722,11 @@ export class FirebaseService {
           });
           practica.id = result.reference.id;
         } else {
-          // Web platform
           const docRef = await addDoc(collection(this.firestore!, 'Practicas'), practica);
           practica.id = docRef.id;
         }
         await this.syncDataFromFirebase();
       } else {
-        console.log('Sin conexión, práctica guardada para sincronizar después');
       }
       return true;
     } catch (error) {
@@ -885,12 +744,10 @@ export class FirebaseService {
             data: { ...practica }
           });
         } else {
-          // Web platform
           await updateDoc(doc(this.firestore!, 'Practicas', practica.id), { ...practica });
         }
         await this.syncDataFromFirebase();
       } else {
-        console.log('Sin conexión, actualización pendiente');
       }
       return true;
     } catch (error) {
@@ -907,12 +764,10 @@ export class FirebaseService {
             reference: `Practicas/${id}`
           });
         } else {
-          // Web platform
           await deleteDoc(doc(this.firestore!, 'Practicas', id));
         }
         await this.syncDataFromFirebase();
       } else {
-        console.log('Sin conexión, eliminación pendiente');
       }
       return true;
     } catch (error) {
@@ -933,7 +788,6 @@ export class FirebaseService {
           );
           await Promise.all(updates);
         } else {
-          // Web platform
           const batch = temas.map(tema => 
             updateDoc(doc(this.firestore!, 'Temas', tema.id), { orden: tema.orden })
           );
@@ -941,7 +795,6 @@ export class FirebaseService {
         }
         await this.syncDataFromFirebase();
       } else {
-        console.log('Sin conexión, reordenamiento pendiente');
       }
       return true;
     } catch (error) {
@@ -950,14 +803,10 @@ export class FirebaseService {
     }
   }
 
-  // ===== MÉTODOS DE UTILIDAD =====
-  
-  // Forzar sincronización manual
   async forceSyncData(): Promise<void> {
     await this.syncDataFromFirebase();
   }
 
-  // Obtener imagen local o remota
   async getImageUrl(tema: Tema): Promise<string | null> {
     if (tema.imagenLocal) {
       return await this.offlineService.getLocalImagePath(tema.imagenLocal);
@@ -965,13 +814,11 @@ export class FirebaseService {
     return tema.img || null;
   }
 
-  // Verificar si hay datos locales
   async hasLocalData(): Promise<boolean> {
     const temas = await this.offlineService.getData(this.STORAGE_KEYS.TEMAS);
     return temas && temas.length > 0;
   }
 
-  // Obtener estado de sincronización
   async getSyncStatus(): Promise<SyncStatus | null> {
     return await this.offlineService.getData(this.STORAGE_KEYS.SYNC_STATUS);
   }

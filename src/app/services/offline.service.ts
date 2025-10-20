@@ -130,28 +130,42 @@ export class OfflineService {
 
   // Descargar y guardar imagen
   async downloadAndSaveImage(url: string, fileName: string): Promise<string> {
+    const filePath = `images/${fileName}`;
     try {
+      // Paso 1: Asegurarse de que el directorio 'images' exista.
+      try {
+        await Filesystem.mkdir({
+          path: 'images',
+          directory: Directory.Data,
+        });
+      } catch (e) {
+        // Es normal que falle si el directorio ya existe.
+        // No hacemos nada en este caso.
+      }
+
+      // Paso 2: Descargar la imagen y convertirla a base64.
       const response = await fetch(url);
       const blob = await response.blob();
       const base64 = await this.blobToBase64(blob);
       
+      // Paso 3: Guardar el archivo en el directorio.
       await Filesystem.writeFile({
-        path: `images/${fileName}`,
+        path: filePath,
         data: base64,
         directory: Directory.Data
       });
 
-      return `images/${fileName}`;
+      return filePath;
     } catch (error) {
       console.error('Error downloading image:', error);
       throw error;
     }
   }
 
-  async getLocalImagePath(fileName: string): Promise<string | null> {
+  async getLocalImagePath(filePath: string): Promise<string | null> {
     try {
       const result = await Filesystem.readFile({
-        path: `images/${fileName}`,
+        path: filePath, // La ruta ya viene completa (ej: "images/nombre.jpg")
         directory: Directory.Data
       });
       return `data:image/jpeg;base64,${result.data}`;

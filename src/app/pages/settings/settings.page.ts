@@ -33,13 +33,11 @@ export class SettingsPage implements OnInit, OnDestroy {
   isAuthenticated = false;
   isLoading = false;
   
-  // Datos de login
   loginData = {
     email: '',
     password: ''
   };
   
-  // Configuraciones de la app
   settings = {
     theme: 'system' as ThemeMode,
     notifications: false,
@@ -47,14 +45,12 @@ export class SettingsPage implements OnInit, OnDestroy {
     autoSave: true
   };
   
-  // Opciones de tema disponibles
   themeOptions = [
     { value: 'system', label: 'Sistema', icon: 'phone' },
     { value: 'light', label: 'Claro', icon: 'sunny' },
     { value: 'dark', label: 'Oscuro', icon: 'moon' }
   ];
   
-  // Datos del perfil
   profile = {
     displayName: '',
     email: '',
@@ -70,24 +66,31 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.loadUserData();
     this.loadSettings();
     this.checkGoogleRedirectResult();
-    // Inicializar el listener para cambios del sistema
     this.themeService.initSystemThemeListener();
   }
 
   ionViewWillEnter() {
-    // Forzar actualización de la vista cuando la página se vuelve visible
     this.cdr.detectChanges();
     
-    // Verificar el estado de autenticación actual
     const currentUser = this.firebaseService.getCurrentUser();
-    if (currentUser && !this.isAuthenticated) {
-      // Si hay un usuario autenticado pero no se ha actualizado la vista
+    
+    if (currentUser) {
       this.user = currentUser;
       this.isAuthenticated = true;
       this.profile.email = currentUser.email || '';
       this.profile.displayName = currentUser.displayName || '';
       this.profile.photoURL = currentUser.photoURL || '';
+      
       this.cdr.detectChanges();
+      this.cdr.markForCheck();
+      
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 100);
+      
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 500);
     }
   }
 
@@ -97,13 +100,11 @@ export class SettingsPage implements OnInit, OnDestroy {
     }
   }
 
-  // Verificar si el usuario regresó de un redirect de Google
   private async checkGoogleRedirectResult() {
     try {
       const result = await this.firebaseService.checkRedirectResult();
       if (result && result.user) {
         this.showToast('¡Bienvenido! Has iniciado sesión con Google');
-        // Forzar actualización de la vista después del redirect
         setTimeout(() => {
           this.cdr.detectChanges();
         }, 500);
@@ -114,19 +115,16 @@ export class SettingsPage implements OnInit, OnDestroy {
         this.showToast('Error al completar el inicio de sesión con Google');
       }
     } finally {
-      // Resetear isLoading después del redirect
       this.isLoading = false;
     }
   }
 
-  // Verificar si estamos en un dispositivo móvil
   private isMobileDevice(): boolean {
     return this.platform.is('mobile') || this.platform.is('tablet');
   }
 
   loadUserData() {
     this.userSubscription = this.firebaseService.user$.subscribe(user => {
-      console.log('User state changed:', user);
       this.user = user;
       this.isAuthenticated = !!user;
       
@@ -134,9 +132,11 @@ export class SettingsPage implements OnInit, OnDestroy {
         this.profile.email = user.email || '';
         this.profile.displayName = user.displayName || '';
         this.profile.photoURL = user.photoURL || '';
-        console.log('Profile updated:', this.profile);
+
+        if (this.profile.photoURL) {
+          this.validateImageUrl(this.profile.photoURL);
+        }
       } else {
-        // Reset profile data when user logs out
         this.profile = {
           displayName: '',
           email: '',
@@ -145,25 +145,25 @@ export class SettingsPage implements OnInit, OnDestroy {
         };
       }
       
-      // Forzar detección de cambios para actualizar la vista inmediatamente
       this.cdr.detectChanges();
+      
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 100);
     });
   }
 
   loadSettings() {
-    // Cargar configuraciones del localStorage
     const savedSettings = localStorage.getItem('appSettings');
     if (savedSettings) {
       const parsed = JSON.parse(savedSettings);
       this.settings = { 
         ...this.settings, 
         ...parsed,
-        // Migrar darkMode legacy a theme
         theme: parsed.theme || (parsed.darkMode ? 'dark' : 'system')
       };
     }
     
-    // Establecer el tema usando el servicio
     this.themeService.setTheme(this.settings.theme);
   }
 
@@ -203,7 +203,6 @@ export class SettingsPage implements OnInit, OnDestroy {
     const currentTheme = this.settings.theme;
     
     if (currentTheme === 'system') {
-      // Mostrar el icono basado en lo que realmente se está mostrando
       const effective = this.themeService.getEffectiveTheme();
       return effective === 'dark' ? 'moon' : 'sunny';
     }
@@ -238,7 +237,6 @@ export class SettingsPage implements OnInit, OnDestroy {
           text: 'Guardar',
           handler: async (data) => {
             try {
-              // Aquí puedes guardar en Firestore el perfil del usuario
               await this.firebaseService.updateDocument('users', this.user.uid, {
                 displayName: data.displayName,
                 bio: data.bio,
@@ -248,7 +246,6 @@ export class SettingsPage implements OnInit, OnDestroy {
               this.profile.bio = data.bio;
               this.showToast('Perfil actualizado');
             } catch (error) {
-              console.error('Error al actualizar perfil:', error);
               this.showToast('Error al actualizar perfil');
             }
           }
@@ -271,7 +268,6 @@ export class SettingsPage implements OnInit, OnDestroy {
         {
           text: 'Enviar',
           handler: () => {
-            // Implementar reset de contraseña
             this.showToast('Email de restablecimiento enviado');
           }
         }
@@ -294,7 +290,6 @@ export class SettingsPage implements OnInit, OnDestroy {
           text: 'Eliminar',
           role: 'destructive',
           handler: () => {
-            // Implementar eliminación de cuenta
             this.showToast('Funcionalidad próximamente');
           }
         }
@@ -309,7 +304,6 @@ export class SettingsPage implements OnInit, OnDestroy {
       await this.firebaseService.logout();
       this.showToast('Sesión cerrada');
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
     }
   }
 
@@ -330,16 +324,12 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   openHelp() {
-    // Implementar página de ayuda
     this.showToast('Página de ayuda próximamente');
   }
 
   openPrivacyPolicy() {
-    // Implementar política de privacidad
     this.showToast('Política de privacidad próximamente');
   }
-
-  // ===== MÉTODOS DE AUTENTICACIÓN =====
 
   async loginWithEmail() {
     if (!this.loginData.email || !this.loginData.password) {
@@ -351,13 +341,10 @@ export class SettingsPage implements OnInit, OnDestroy {
     try {
       await this.firebaseService.login(this.loginData.email, this.loginData.password);
       this.showToast('¡Bienvenido!');
-      // Limpiar formulario
       this.loginData = { email: '', password: '' };
     } catch (error: any) {
-      console.error('Error en login:', error);
       let message = 'Error al iniciar sesión';
       
-      // Personalizar mensajes de error
       if (error.code === 'auth/user-not-found') {
         message = 'Usuario no encontrado';
       } else if (error.code === 'auth/wrong-password') {
@@ -377,7 +364,6 @@ export class SettingsPage implements OnInit, OnDestroy {
   async loginWithGoogle() {
     this.isLoading = true;
     
-    // Mostrar mensaje específico para móviles
     if (this.isMobileDevice()) {
       this.showToast('Redirigiendo a Google...');
     }
@@ -385,24 +371,17 @@ export class SettingsPage implements OnInit, OnDestroy {
     try {
       const result = await this.firebaseService.loginWithGoogle();
       
-      // Si estamos en móvil, el resultado será { user: null, pending: true }
       if (result && 'pending' in result && result.pending) {
-        // El usuario será redirigido automáticamente
-        // El resultado se manejará cuando regrese a la app
-        // En móvil, no resetear isLoading aquí ya que el proceso continúa
         return;
       }
       
-      // Si estamos en desktop, mostramos el mensaje de éxito
       this.showToast('¡Bienvenido!');
       
-      // Forzar actualización de la vista
       setTimeout(() => {
         this.cdr.detectChanges();
       }, 500);
       
     } catch (error: any) {
-      console.error('Error en login con Google:', error);
       let message = 'Error al iniciar sesión con Google';
       
       if (error.code === 'auth/popup-closed-by-user') {
@@ -417,7 +396,6 @@ export class SettingsPage implements OnInit, OnDestroy {
       
       this.showToast(message);
     } finally {
-      // Solo resetear isLoading en desktop o si hay error
       if (!this.isMobileDevice()) {
         this.isLoading = false;
       }
@@ -472,7 +450,6 @@ export class SettingsPage implements OnInit, OnDestroy {
               this.showToast('¡Cuenta creada exitosamente!');
               return true;
             } catch (error: any) {
-              console.error('Error en registro:', error);
               let message = 'Error al crear la cuenta';
               
               if (error.code === 'auth/email-already-in-use') {
@@ -494,7 +471,6 @@ export class SettingsPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  // Método para forzar actualización manual de la vista
   forceRefresh() {
     const currentUser = this.firebaseService.getCurrentUser();
     if (currentUser) {
@@ -503,22 +479,46 @@ export class SettingsPage implements OnInit, OnDestroy {
       this.profile.email = currentUser.email || '';
       this.profile.displayName = currentUser.displayName || '';
       this.profile.photoURL = currentUser.photoURL || '';
+      
       this.cdr.detectChanges();
+      this.cdr.markForCheck();
+      
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 50);
+      
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 200);
+      
       this.showToast('Perfil actualizado');
+    } else {
+      this.showToast('No hay usuario autenticado');
     }
   }
 
-  // Handle image loading success
   onImageLoad() {
-    console.log('User profile image loaded successfully');
     this.cdr.detectChanges();
   }
 
-  // Handle image loading errors
   onImageError(event: any) {
-    console.warn('Error loading user profile image:', event);
-    // Clear the photoURL to show the default icon
     this.profile.photoURL = '';
     this.cdr.detectChanges();
+  }
+
+  private validateImageUrl(url: string) {
+    if (!url) return;
+    
+    const img = new Image();
+    img.onload = () => {
+      this.cdr.detectChanges();
+    };
+    
+    img.onerror = (error) => {
+      this.profile.photoURL = '';
+      this.cdr.detectChanges();
+    };
+    
+    img.src = url;
   }
 }
