@@ -34,6 +34,8 @@
     "@capacitor/filesystem": "^7.1.1",
     "@capacitor/network": "^7.0.1",
     "@capacitor/preferences": "^7.0.1",
+    "@capacitor/status-bar": "^7.0.3",
+    "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.3",
     "@ionic/angular": "^8.0.0",
     "firebase": "^11.9.1",
     "ionicons": "^7.0.0",

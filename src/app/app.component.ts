@@ -18,7 +18,6 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     await this.platform.ready();
-    
     this.themeService.initSystemThemeListener();
   }
 }

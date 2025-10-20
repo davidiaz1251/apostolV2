@@ -11,8 +11,11 @@ import { environment } from './environments/environment';
 // Importar Firebase para web
 import { initializeApp } from 'firebase/app';
 
+import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+
 // Inicializar Firebase para web si es necesario
 if (!Capacitor.isNativePlatform()) {
+  EdgeToEdge.disable();
   initializeApp(environment.firebase);
 }
 
