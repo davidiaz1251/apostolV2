@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "830365553419",
+    "firebase_url": "https://apostol-de-la-palabra-51924.firebaseio.com",
+    "project_id": "apostol-de-la-palabra-51924",
+    "storage_bucket": "apostol-de-la-palabra-51924.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830365553419:android:da1493b03e2ab09725c80e",
+        "android_client_info": {
+          "package_name": "com.apostoldelapalabra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830365553419-0jg2idbcfvgsg4c59qq86c4f47mldhhn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apostoldelapalabra",
+            "certificate_hash": "c48e387a778d2379c8ddda9fbaa1d5d4bcc737da"
+          }
+        },
+        {
+          "client_id": "830365553419-ev0sd399ent1rgg0q8notheuq7m7top8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxLSlBJDrYcdbj0sufhiPiH--N5vqLedM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830365553419-ev0sd399ent1rgg0q8notheuq7m7top8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "830365553419-93a1hidfmked33o8hg6rrpegpe2fagf7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.apostoldelapalabra"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

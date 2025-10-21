@@ -22,6 +22,12 @@
       "minimumFetchIntervalInSeconds": 3600
     },
     "FirebaseStorage": {
+    },
+    "LiveUpdates": {
+      "appId": "337da5df",
+      "channel": "Production",
+      "autoUpdateMethod": "background",
+      "maxVersions": 2
     }
   }
 }
