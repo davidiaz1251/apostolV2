@@ -24,27 +24,27 @@ export class StyleDocumentoPipe implements PipeTransform {
 
   private cleanAndStyleHTML(html: string): string {
     // Eliminar estilos inline que puedan conflictuar
-    html = html.replace(/style="[^"]*"/gi, '');
+    // html = html.replace(/style="[^"]*"/gi, '');
 
     // Limpiar atributos no deseados
-    html = html.replace(/class="[^"]*"/gi, '');
+    // html = html.replace(/class="[^"]*"/gi, '');
 
     // Mejorar saltos de línea
-    html = html.replace(/<br\s*\/?>/gi, '<br />');
+    // html = html.replace(/<br\s*\/?>/gi, '<br />');
 
     // Asegurar que las imágenes sean responsive
-    html = html.replace(/<img([^>]*)>/gi, '<img$1 style="max-width: 100%; height: auto; border-radius: 8px;" />');
+    // html = html.replace(/<img([^>]*)>/gi, '<img$1 style="max-width: 100%; height: auto; border-radius: 8px;" />');
 
     // Mejorar listas
-    html = html.replace(/<ul([^>]*)>/gi, '<ul class="styled-list"$1>');
-    html = html.replace(/<ol([^>]*)>/gi, '<ol class="styled-list"$1>');
+    // html = html.replace(/<ul([^>]*)>/gi, '<ul class="styled-list"$1>');
+    // html = html.replace(/<ol([^>]*)>/gi, '<ol class="styled-list"$1>');
 
     // Mejorar tablas
-    html = html.replace(/<table([^>]*)>/gi, '<div class="table-wrapper"><table class="styled-table"$1>');
-    html = html.replace(/<\/table>/gi, '</table></div>');
+    // html = html.replace(/<table([^>]*)>/gi, '<div class="table-wrapper"><table class="styled-table"$1>');
+    // html = html.replace(/<\/table>/gi, '</table></div>');
 
     // Mejorar blockquotes
-    html = html.replace(/<blockquote([^>]*)>/gi, '<blockquote class="styled-quote"$1>');
+    // html = html.replace(/<blockquote([^>]*)>/gi, '<blockquote class="styled-quote"$1>');
 
     return html;
   }
